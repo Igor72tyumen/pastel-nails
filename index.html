@@ -55,10 +55,8 @@
             display: none;
             position: fixed;
             z-index: 10000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
             background: rgba(0,0,0,0.8);
             backdrop-filter: blur(10px);
         }
@@ -76,31 +74,18 @@
         
         .time-input { width: 80px; }
         .delete-mode .admin-time-slot { border-color: #ef4444 !important; }
-        .delete-mode .admin-time-slot:hover {
-            border-color: #dc2626 !important;
-            background: rgba(239,68,68,0.1) !important;
-        }
+        .delete-mode .admin-time-slot:hover { border-color: #dc2626 !important; background: rgba(239,68,68,0.1) !important; }
         .loading { opacity: 0.6; pointer-events: none; }
         
         /* Responsive table for appointments */
         .appointments-table { overflow-x: auto; }
-        .appointments-table table { min-width: 1000px; border-collapse: collapse; }
-        .appointments-table th, .appointments-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
-        }
-        .appointments-table th {
-            background: rgba(255,255,255,0.5);
-            font-weight: bold;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
+        .appointments-table table { min-width: 1200px; border-collapse: collapse; }
+        .appointments-table th, .appointments-table td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.1); }
+        .appointments-table th { background: rgba(255,255,255,0.5); font-weight: bold; position: sticky; top: 0; z-index: 10; }
     </style>
 </head>
 <body class="hero-bg min-h-screen text-gray-800">
-
+    
     <!-- Admin Password Modal -->
     <div id="adminPasswordModal" class="admin-password-modal">
         <div class="glass backdrop-blur-xl p-12 rounded-4xl shadow-3xl max-w-md w-full mx-4 text-center">
@@ -111,13 +96,13 @@
             </div>
             <div class="flex gap-3 pt-4">
                 <button onclick="checkAdminPassword()" class="flex-1 bg-gradient-to-r from-pink-500 to-purple-500 text-white py-6 rounded-3xl font-bold text-xl shadow-3xl hover:shadow-pink-600/60 hover:scale-105 transition-all duration-500">
-                    <i class="fas fa-crown mr-2"></i>Войти
+                    <i class="fas fa-crown mr-2"></i> Войти
                 </button>
                 <button onclick="closeAdminPasswordModal()" class="flex-1 glass py-6 rounded-3xl font-bold text-xl hover:shadow-xl transition-all border border-gray-200">
-                    <i class="fas fa-times mr-2"></i>Отмена
+                    <i class="fas fa-times mr-2"></i> Отмена
                 </button>
             </div>
-            <p class="text-xs text-gray-500 mt-4">⚠️ Закройте все вкладки после выхода</p>
+            <p class="text-xs text-gray-500 mt-4">Пароль показан только один раз при первом входе</p>
         </div>
     </div>
 
@@ -136,11 +121,11 @@
                 Pastel Nails<br><span class="text-pink-400">Маникюрная студия</span>
             </h1>
             <p class="text-lg md:text-2xl lg:text-3xl text-gray-700 mb-12 font-light max-w-2xl mx-auto leading-relaxed">
-                ✨ Нежный маникюр в пастельных тонах. 24/7 онлайн-запись
+                Нежный маникюр 24/7. Онлайн запись на классику, дизайн, френч и SPA.
             </p>
             <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20">
                 <a href="#booking" class="glass px-12 py-6 rounded-3xl text-xl font-bold montserrat text-white shadow-2xl hover:shadow-pink-500/50 transition-all duration-500 hover:scale-105 bg-gradient-to-r from-pink-400/80 to-rose-400/80 border-2 border-white/50">
-                    <i class="fas fa-calendar-check mr-3"></i>Записаться
+                    <i class="fas fa-calendar-check mr-3"></i> Записаться
                 </a>
             </div>
         </div>
@@ -197,7 +182,7 @@
             </div>
             <form id="bookingForm" class="space-y-6">
                 <div>
-                    <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">👤 Имя</label>
+                    <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">👤 Имя клиента</label>
                     <input type="text" id="clientName" required class="w-full p-5 border-2 border-pink-200/50 rounded-3xl focus:border-pink-400 focus:outline-none focus:ring-4 focus:ring-pink-200/30 bg-pink-50/70 text-lg">
                 </div>
                 <div>
@@ -209,8 +194,8 @@
                     <select id="serviceSelect" required class="w-full p-5 border-2 border-purple-200/50 rounded-3xl focus:border-purple-400 focus:outline-none focus:ring-4 focus:ring-purple-200/30 bg-lavender-50/70 text-lg">
                         <option value="">Выберите услугу</option>
                         <option value="60 - 1800, 60">60 мин - Классика - 1800₽</option>
-                        <option value="90 - Дизайн, 90">90 мин - Дизайн - 2500₽</option>
-                        <option value="75 - Френч, 75">75 мин - Френч - 2200₽</option>
+                        <option value="90 - 2500, 90">90 мин - Дизайн - 2500₽</option>
+                        <option value="75 - 2200, 75">75 мин - Френч - 2200₽</option>
                         <option value="SPA - 3000, 120">120 мин - SPA - 3000₽</option>
                     </select>
                 </div>
@@ -223,7 +208,7 @@
                     <div id="timeSlots" class="grid grid-cols-3 md:grid-cols-6 gap-3"></div>
                 </div>
                 <button type="submit" id="submitBtn" disabled class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-6 rounded-3xl text-2xl font-bold montserrat shadow-3xl hover:shadow-pink-600/60 hover:scale-1.02 transition-all duration-500 opacity-50 cursor-not-allowed">
-                    <i class="fas fa-check mr-3"></i>Записаться
+                    <i class="fas fa-check mr-3"></i> Записаться
                 </button>
             </form>
         </div>
@@ -253,14 +238,14 @@
                         </select>
                     </div>
                 </div>
-            </div>
-            <div class="flex gap-3 pt-4">
-                <button onclick="addTimeSlot()" class="flex-1 bg-gradient-to-r from-green-400 to-teal-400 text-white py-4 rounded-3xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all">
-                    <i class="fas fa-plus mr-2"></i>Добавить
-                </button>
-                <button onclick="closeAddSlotModal()" class="flex-1 glass py-4 rounded-3xl font-bold text-lg hover:shadow-xl transition-all border border-gray-200">
-                    <i class="fas fa-times mr-2"></i>Отмена
-                </button>
+                <div class="flex gap-3 pt-4">
+                    <button onclick="addTimeSlot()" class="flex-1 bg-gradient-to-r from-green-400 to-teal-400 text-white py-4 rounded-3xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all">
+                        <i class="fas fa-plus mr-2"></i> Добавить
+                    </button>
+                    <button onclick="closeAddSlotModal()" class="flex-1 glass py-4 rounded-3xl font-bold text-lg hover:shadow-xl transition-all border border-gray-200">
+                        <i class="fas fa-times mr-2"></i> Отмена
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -291,14 +276,14 @@
                         <option value="150">150</option>
                     </select>
                 </div>
-            </div>
-            <div class="flex gap-3 pt-4">
-                <button onclick="bulkOpenSlots()" class="flex-1 bg-gradient-to-r from-green-400 to-teal-400 text-white py-4 rounded-3xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all">
-                    <i class="fas fa-magic mr-2"></i>Создать слоты
-                </button>
-                <button onclick="closeBulkSlotsModal()" class="flex-1 glass py-4 rounded-3xl font-bold text-lg hover:shadow-xl transition-all border border-gray-200">
-                    <i class="fas fa-times mr-2"></i>Отмена
-                </button>
+                <div class="flex gap-3 pt-4">
+                    <button onclick="bulkOpenSlots()" class="flex-1 bg-gradient-to-r from-green-400 to-teal-400 text-white py-4 rounded-3xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all">
+                        <i class="fas fa-magic mr-2"></i> Создать слоты
+                    </button>
+                    <button onclick="closeBulkSlotsModal()" class="flex-1 glass py-4 rounded-3xl font-bold text-lg hover:shadow-xl transition-all border border-gray-200">
+                        <i class="fas fa-times mr-2"></i> Отмена
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -309,7 +294,7 @@
             <div class="flex justify-between items-center mb-8">
                 <h2 class="montserrat text-4xl font-black bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent flex items-center">
                     <i class="fas fa-crown text-3xl mr-4 text-yellow-400"></i>
-                    Pastel Nails • Админ
+                    Pastel Nails Админ
                 </h2>
                 <div class="flex gap-3">
                     <button id="deleteSlotsBtn" onclick="toggleDeleteMode()" class="glass p-4 rounded-3xl text-xl hover:scale-110 transition-all shadow-xl border border-red-200 relative" title="Режим удаления">
@@ -373,18 +358,18 @@
                 </div>
             </div>
 
-            <!-- All Appointments - NEW TABLE FORMAT BY DAYS -->
+            <!-- All Appointments - НОВАЯ ТАБЛИЦА С ТРЕБОВЫМ ПОРЯДКОМ СТОЛБЦОВ -->
             <div class="mt-12">
                 <h4 class="montserrat text-2xl font-bold text-gray-800 flex items-center mb-6">
                     <i class="fas fa-list text-pink-400 mr-3"></i>
                     Все записи
-                    <i class="fas fa-sort text-xs ml-2 text-gray-400" title="Группировка по дням"></i>
+                    <i class="fas fa-sort text-xs ml-2 text-gray-400" title="Сортировка по дате"></i>
                 </h4>
                 <div id="allAppointmentsList" class="appointments-table">
                     <table>
                         <thead>
                             <tr>
-                                <th>Дата</th>
+                                <th>Время и дата</th>
                                 <th>Клиент</th>
                                 <th>Телефон</th>
                                 <th>Услуга</th>
@@ -440,7 +425,6 @@
                         createdAt: doc.data().createdAt ? doc.data().createdAt.toDate() : new Date(),
                         timestamp: doc.data().timestamp || 0
                     }));
-                    
                     const bookingDate = document.getElementById('bookingDate')?.value;
                     if (bookingDate) updateTimeSlots(bookingDate);
                     if (document.getElementById('adminPanel')?.classList.contains('active')) {
@@ -450,7 +434,7 @@
                     }
                 });
 
-                console.log('✅ Firebase подключен!');
+                console.log('✅ Firebase initialized!');
             } catch (error) {
                 console.error('Firebase:', error);
                 alert('❌ Проверьте FIREBASE_CONFIG');
@@ -484,7 +468,6 @@
             const select = document.getElementById('bookingDate');
             const currentValue = select.value;
             const availableDates = getAvailableDates();
-
             select.innerHTML = '<option value="">Выберите дату</option>';
             availableDates.forEach(dateStr => {
                 const date = new Date(dateStr + 'T00:00:00');
@@ -493,17 +476,14 @@
                 option.textContent = date.toLocaleDateString('ru-RU', { weekday: 'short', month: 'short', day: 'numeric' });
                 select.appendChild(option);
             });
-
-            if (availableDates.includes(currentValue)) {
-                select.value = currentValue;
-                updateTimeSlots(currentValue);
-            }
+            if (availableDates.includes(currentValue)) select.value = currentValue;
+            updateTimeSlots(currentValue);
         }
 
         function updateTimeSlots(dateStr) {
             if (!dateStr || !availableSlots[dateStr]) {
                 const container = document.getElementById('timeSlots');
-                container.innerHTML = '<p class="col-span-full text-center text-gray-500 p-8 text-lg">Нет доступных слотов</p>';
+                container.innerHTML = '<p class="col-span-full text-center text-gray-500 p-8 text-lg">Свободных слотов нет</p>';
                 document.getElementById('submitBtn').disabled = true;
                 document.getElementById('submitBtn').classList.add('opacity-50', 'cursor-not-allowed');
                 return;
@@ -511,21 +491,18 @@
 
             const container = document.getElementById('timeSlots');
             container.innerHTML = '';
-            
             availableSlots[dateStr].forEach(slotTime => {
                 const slotId = dateStr + slotTime;
                 const isBooked = appointments.some(apt => apt.slot === slotId);
-
                 const button = document.createElement('button');
                 button.type = 'button';
                 button.className = `p-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
-                    isBooked 
-                        ? 'bg-rose-200 text-rose-600 cursor-not-allowed shadow-lg glass border-2 border-pink-200/50 hover:border-pink-400 hover:shadow-xl hover:scale-105'
-                        : 'bg-gradient-to-r from-purple-400 to-pink-400 text-white border-purple-400 hover:shadow-xl hover:scale-105 bg-pink-50/70'
+                    isBooked ? 'bg-rose-200 text-rose-600 cursor-not-allowed shadow-lg glass border-2 border-pink-200/50 hover:border-pink-400 hover:shadow-xl hover:scale-105 bg-pink-50/70' :
+                    'bg-gradient-to-r from-purple-400 to-pink-400 text-white border-purple-400 hover:shadow-xl hover:scale-105 bg-pink-50/70'
                 }`;
-                button.innerHTML = isBooked 
-                    ? `<i class="fas fa-clock mr-2"></i>${slotTime}`
-                    : `<i class="fas fa-clock mr-2"></i>${slotTime}`;
+                button.innerHTML = isBooked ?
+                    `<i class="fas fa-clock mr-2"></i>${slotTime}` :
+                    `<i class="fas fa-clock mr-2"></i>${slotTime}`;
                 button.onclick = isBooked ? null : () => selectTimeSlot(slotId);
                 container.appendChild(button);
             });
@@ -632,7 +609,6 @@
             deleteMode = !deleteMode;
             const btn = document.getElementById('deleteSlotsBtn');
             const indicator = document.getElementById('deleteModeIndicator');
-            
             if (deleteMode) {
                 document.body.classList.add('delete-mode');
                 btn.classList.add('bg-red-100', 'border-red-400');
@@ -711,7 +687,6 @@
                 let availableSlotsData = availableSlots[dateStr] || [];
                 const start = new Date('2000-01-01T' + startTime);
                 const end = new Date('2000-01-01T' + endTime);
-
                 for (let time = new Date(start); time < end; time.setMinutes(time.getMinutes() + slotStep)) {
                     const slotTime = time.toTimeString().slice(0, 5);
                     if (new Date('2000-01-01T' + slotTime) < end && !availableSlotsData.includes(slotTime)) {
@@ -725,10 +700,10 @@
                 if (currentClientDate) updateTimeSlots(currentClientDate);
                 updateAdminPanel();
                 closeBulkSlotsModal();
-                alert('✅ Слоты созданы!');
+                alert('✅ Слоты созданы массово!');
             } catch (error) {
                 console.error('Ошибка:', error);
-                alert('❌ Ошибка создания слотов');
+                alert('❌ Ошибка массового создания слотов');
             }
         }
 
@@ -776,14 +751,13 @@
             const dateAppointments = appointments.filter(apt => apt.slot?.startsWith(currentAdminDate));
 
             if (!slotsForDate || slotsForDate.length === 0) {
-                timeGrid.innerHTML = '<div class="col-span-full p-12 text-center text-gray-500 italic text-xl"><br>Нет слотов на эту дату</div>';
+                timeGrid.innerHTML = '<div class="col-span-full p-12 text-center text-gray-500 italic text-xl"><br>Слотов нет</div>';
                 return;
             }
 
             slotsForDate.forEach(slotTime => {
                 const slotId = currentAdminDate + slotTime;
                 const slotAppointments = dateAppointments.filter(apt => apt.slot === slotId);
-
                 const div = document.createElement('div');
                 div.className = `admin-time-slot p-6 rounded-3xl border-2 transition-all cursor-pointer hover:shadow-2xl shadow-lg ${
                     deleteMode ? 'delete-ready' : ''
@@ -791,11 +765,11 @@
                 div.innerHTML = `
                     <div class="font-bold text-xl montserrat mb-2">${slotTime}</div>
                     <div class="text-lg font-semibold mb-3">${slotAppointments.length}</div>
-                    ${slotAppointments.slice(0,2).map(apt => 
-                        `<div class="text-sm bg-white/50 rounded-xl p-2 mb-1">${apt.name.slice(0,20)}${apt.name.length>20?'...':''}</div>`
-                    ).join('')}
+                    ${slotAppointments.slice(0,2).map(apt => `
+                        <div class="text-sm bg-white/50 rounded-xl p-2 mb-1">${apt.name.slice(0,20)}${apt.name.length>20?'...':''}</div>
+                    `).join('')}
                     ${slotAppointments.length > 2 ? `<div class="text-xs text-white/80">${slotAppointments.length-2} ещё</div>` : ''}
-                    ${deleteMode ? '<div class="mt-2 p-2 bg-red-100/80 rounded-xl text-red-600 text-sm font-bold">🗑️ Удалить</div>' : ''}
+                    ${deleteMode ? '<div class="mt-2 p-2 bg-red-100/80 rounded-xl text-red-600 text-sm font-bold">Удалить</div>' : ''}
                 `;
                 div.onclick = deleteMode ? () => deleteTimeSlot(currentAdminDate, slotTime) : () => showSlotDetails(slotId, slotAppointments);
                 timeGrid.appendChild(div);
@@ -804,6 +778,7 @@
             updateAppointmentsTable();
         }
 
+        // НОВАЯ ФУНКЦИЯ updateAppointmentsTable С ТРЕБОВЫМ ПОРЯДКОМ СТОЛБЦОВ
         function updateAppointmentsTable() {
             const tbody = document.querySelector('#allAppointmentsList tbody');
             if (!tbody) return;
@@ -812,9 +787,7 @@
             const appointmentsByDate = {};
             appointments.forEach(apt => {
                 const dateKey = apt.slotDate || apt.slot?.split('T')[0];
-                if (!appointmentsByDate[dateKey]) {
-                    appointmentsByDate[dateKey] = [];
-                }
+                if (!appointmentsByDate[dateKey]) appointmentsByDate[dateKey] = [];
                 appointmentsByDate[dateKey].push(apt);
             });
 
@@ -827,9 +800,8 @@
                 const dateAppts = appointmentsByDate[dateKey];
                 dateAppts.sort((a, b) => a.slotTime?.localeCompare(b.slotTime) || 0);
                 dateAppts.slice(0, 10).forEach(apt => { // Max 10 per day
-                    const statusIcon = apt.status === 'confirmed' ? '✅' : 
+                    const statusIcon = apt.status === 'confirmed' ? '✅' :
                                      apt.status === 'cancelled' ? '❌' : '⏳';
-                    
                     const row = document.createElement('tr');
                     row.className = `group hover:bg-gray-50/50 transition-all ${
                         apt.status === 'confirmed' ? 'border-l-4 border-green-400 bg-green-50/80' :
@@ -837,18 +809,22 @@
                         'border-l-4 border-yellow-400 bg-yellow-50/80'
                     }`;
                     row.innerHTML = `
-                        <td class="font-semibold text-pink-600">${apt.createdAt ? apt.createdAt.toLocaleString('ru-RU') : new Date(apt.timestamp).toLocaleString('ru-RU')}</td>
+                        <td class="font-semibold text-pink-600">
+                            ${apt.slotTime || ''} ${new Date(apt.slotDate || dateKey).toLocaleDateString('ru-RU', {day: '2-digit', month: '2-digit'})}
+                        </td>
                         <td class="font-bold montserrat">${apt.name}</td>
                         <td>${apt.phone}</td>
                         <td>${apt.service}</td>
-                        <td class="font-bold text-lg text-teal-600">${apt.price}</td>
+                        <td class="font-bold text-lg text-teal-600">${apt.price}₽</td>
                         <td class="text-2xl">${statusIcon}</td>
                         <td class="flex gap-2">
                             ${apt.status !== 'confirmed' ? `
                                 <button onclick="confirmAppointment('${apt.id}')" class="px-4 py-2 bg-green-400 text-white rounded-xl text-sm font-bold hover:bg-green-500 transition-all flex-1">Подтвердить</button>
                                 <button onclick="cancelAppointment('${apt.id}')" class="px-4 py-2 bg-rose-400 text-white rounded-xl text-sm font-bold hover:bg-rose-500 transition-all flex-1">Отменить</button>
                             ` : ''}
-                            ${apt.status === 'cancelled' ? '' : `<button onclick="deleteAppointment('${apt.id}')" class="px-4 py-2 bg-red-500 text-white rounded-xl text-sm font-bold hover:bg-red-600 transition-all flex-1">Удалить</button>`}
+                            ${apt.status === 'cancelled' ? '' : `
+                                <button onclick="deleteAppointment('${apt.id}')" class="px-4 py-2 bg-red-500 text-white rounded-xl text-sm font-bold hover:bg-red-600 transition-all flex-1">Удалить</button>
+                            `}
                         </td>
                     `;
                     tbody.appendChild(row);
@@ -856,7 +832,7 @@
             });
 
             if (sortedDates.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="p-12 text-center text-gray-500 italic text-xl">Нет записей</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="p-12 text-center text-gray-500 italic text-xl">Записей нет</td></tr>';
             }
         }
 
@@ -874,7 +850,7 @@
         async function cancelAppointment(id) {
             const apt = appointments.find(a => a.id === id);
             if (apt.status === 'cancelled') {
-                if (confirm('Запись уже отменена. Удалить навсегда?')) {
+                if (confirm('Запись уже отменена. Полностью удалить?')) {
                     await window.firebase.deleteDoc(window.firebase.doc(db, 'appointments', id));
                 }
                 return;
@@ -923,7 +899,6 @@
             const tomorrow = new Date();
             tomorrow.setDate(tomorrow.getDate() + 1);
             const tomorrowStr = tomorrow.toISOString().split('T')[0];
-
             document.getElementById('stats').textContent = appointments.filter(apt => apt.slotDate === today).length;
             document.getElementById('statsTomorrow').textContent = appointments.filter(apt => apt.slotDate === tomorrowStr).length;
         }
@@ -954,7 +929,7 @@
         document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
+            anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 document.querySelector(this.getAttribute('href')).scrollIntoView({
                     behavior: 'smooth'
