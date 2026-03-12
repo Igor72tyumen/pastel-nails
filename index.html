@@ -25,9 +25,9 @@
       storageBucket: "pastelnails-7272.firebasestorage.app",
       messagingSenderId: "584452328728",
       appId: "1584452328728web1fb147f90bf1eada09a26d"
-    };
+    }
   </script>
-  
+
   <style>
     body { font-family: 'Lora', serif; }
     .montserrat { font-family: 'Montserrat', sans-serif; }
@@ -45,22 +45,68 @@
     .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
     .fade-in.visible { opacity: 1; transform: translateY(0); }
     .glass { backdrop-filter: blur(20px); background: rgba(255,255,255,0.25); }
+    
+    /* Admin Panel Styles */
     .admin-panel { display: none; }
     .admin-panel.active { display: block; }
-    .modal {
-      display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
-      background: rgba(0,0,0,0.5);
+    
+    /* Admin Password Modal */
+    .admin-password-modal { 
+      display: none; 
+      position: fixed; 
+      z-index: 10000; 
+      left: 0; 
+      top: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.8); 
+      backdrop-filter: blur(10px);
+    }
+    .admin-password-modal.active { display: flex; align-items: center; justify-content: center; }
+    
+    .modal { 
+      display: none; 
+      position: fixed; 
+      z-index: 1000; 
+      left: 0; top: 0; 
+      width: 100%; height: 100%; 
+      background: rgba(0,0,0,0.5); 
     }
     .modal.active { display: flex; align-items: center; justify-content: center; }
+    
     .time-input { width: 80px; }
     .delete-mode .admin-time-slot { border-color: #ef4444 !important; }
-    .delete-mode .admin-time-slot:hover { border-color: #dc2626 !important; background: rgba(239,68,68,0.1) !important; }
+    .delete-mode .admin-time-slot:hover { 
+      border-color: #dc2626 !important; 
+      background: rgba(239,68,68,0.1) !important; 
+    }
     .loading { opacity: 0.6; pointer-events: none; }
   </style>
 </head>
+
 <body class="bg-gradient-to-br from-pink-50 via-lavender-50 to-mint-50 min-h-screen text-gray-800">
 
-  <!-- Admin Toggle -->
+  <!-- Admin Password Modal -->
+  <div id="adminPasswordModal" class="admin-password-modal">
+    <div class="glass backdrop-blur-xl p-12 rounded-4xl shadow-3xl max-w-md w-full mx-4 text-center">
+      <h3 class="montserrat text-3xl font-black text-gray-800 mb-8">🔐 Админ панель</h3>
+      <p class="text-lg text-gray-700 mb-6">Введите пароль для доступа:</p>
+      <div class="space-y-4">
+        <input type="password" id="adminPassword" class="w-full p-6 border-2 border-pink-200/50 rounded-3xl focus:border-pink-400 focus:outline-none focus:ring-4 focus:ring-pink-200/30 bg-pink-50/70 text-xl text-center font-mono tracking-wider" placeholder="••••••••">
+        <div class="flex gap-3 pt-4">
+          <button onclick="checkAdminPassword()" class="flex-1 bg-gradient-to-r from-pink-500 to-purple-500 text-white py-6 rounded-3xl font-bold text-xl shadow-3xl hover:shadow-pink-600/60 hover:scale-105 transition-all duration-500">
+            <i class="fas fa-crown mr-2"></i>Войти
+          </button>
+          <button onclick="closeAdminPasswordModal()" class="flex-1 glass py-6 rounded-3xl font-bold text-xl hover:shadow-xl transition-all border border-gray-200">
+            <i class="fas fa-times mr-2"></i>Отмена
+          </button>
+        </div>
+      </div>
+      <p class="text-xs text-gray-500 mt-4">Пароль показан только один раз при первом открытии</p>
+    </div>
+  </div>
+
+  <!-- Admin Toggle Button -->
   <div id="adminToggle" class="fixed top-6 right-6 z-50">
     <button onclick="toggleAdmin()" class="glass p-4 rounded-3xl shadow-2xl text-2xl hover:scale-110 transition-all duration-300">
       <i class="fas fa-crown text-yellow-500"></i>
@@ -72,14 +118,14 @@
     <div class="absolute inset-0 bg-white/30"></div>
     <div class="relative z-10 max-w-4xl mx-auto px-4">
       <h1 class="montserrat text-4xl md:text-7xl lg:text-8xl font-black text-gray-800 mb-6 leading-tight drop-shadow-2xl">
-        Pastel Nails<br><span class="text-pink-400">Нежный маникюр</span>
+        Pastel Nails<br><span class="text-pink-400">Маникюр мечты</span>
       </h1>
       <p class="text-lg md:text-2xl lg:text-3xl text-gray-700 mb-12 font-light max-w-2xl mx-auto leading-relaxed">
-        Маникюр в пастельных тонах • Комфортная атмосфера • Индивидуальный подход
+        Нежный дизайн • Профессиональный уход • Индивидуальный подход
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20">
         <a href="#booking" class="glass px-12 py-6 rounded-3xl text-xl font-bold montserrat text-white shadow-2xl hover:shadow-pink-500/50 transition-all duration-500 hover:scale-105 bg-gradient-to-r from-pink-400/80 to-rose-400/80 border-2 border-white/50">
-          <i class="fas fa-calendar-check mr-3"></i>Записаться онлайн
+          <i class="fas fa-calendar-check mr-3"></i>Записаться
         </a>
       </div>
     </div>
@@ -89,7 +135,7 @@
   <section id="services" class="py-24 px-6 max-w-7xl mx-auto fade-in">
     <div class="text-center mb-20">
       <h2 class="montserrat text-5xl md:text-6xl font-black text-gray-800 mb-6">Наши услуги</h2>
-      <div class="handwritten text-4xl text-pink-400 mb-4">Pastel Nails</div>
+      <div class="handwritten text-4xl text-pink-400 mb-4">✨</div>
     </div>
     <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
       <div class="glass p-10 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 border border-pink-100/50 service-card" data-price="1800" data-duration="60">
@@ -112,7 +158,7 @@
         <div class="w-24 h-24 bg-gradient-to-br from-mint-200/80 to-teal-200/80 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl">
           <i class="fas fa-gem text-3xl text-teal-500"></i>
         </div>
-        <h3 class="montserrat text-3xl font-black text-gray-800 mb-4 text-center">Пастель</h3>
+        <h3 class="montserrat text-3xl font-black text-gray-800 mb-4 text-center">Френч</h3>
         <div class="text-4xl font-black text-teal-500 montserrat text-center mb-2">2200₽</div>
         <div class="text-sm text-teal-400 font-semibold text-center">75 мин</div>
       </div>
@@ -131,35 +177,35 @@
   <section id="booking" class="py-24 px-6 max-w-2xl mx-auto fade-in">
     <div class="glass backdrop-blur-xl p-12 md:p-16 rounded-3xl shadow-3xl border border-white/50">
       <div class="text-center mb-12">
-        <div class="handwritten text-5xl mb-4 mx-auto text-pink-400">Запишитесь</div>
-        <h2 class="montserrat text-4xl md:text-5xl font-black text-gray-800 mb-4">Онлайн запись</h2>
-        <p class="text-xl text-gray-700 italic">1000-3000₽</p>
+        <div class="handwritten text-5xl mb-4 mx-auto text-pink-400">💅</div>
+        <h2 class="montserrat text-4xl md:text-5xl font-black text-gray-800 mb-4">Запись онлайн</h2>
+        <p class="text-xl text-gray-700 italic">1000-2000₽</p>
       </div>
       <form id="bookingForm" class="space-y-6">
         <div>
-          <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">Имя</label>
+          <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">👤 Имя</label>
           <input type="text" id="clientName" required class="w-full p-5 border-2 border-pink-200/50 rounded-3xl focus:border-pink-400 focus:outline-none focus:ring-4 focus:ring-pink-200/30 bg-pink-50/70 text-lg">
         </div>
         <div>
-          <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">Телефон</label>
+          <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">📱 Телефон</label>
           <input type="tel" id="clientPhone" required class="w-full p-5 border-2 border-mint-200/50 rounded-3xl focus:border-mint-400 focus:outline-none focus:ring-4 focus:ring-mint-200/30 bg-mint-50/70 text-lg">
         </div>
         <div>
-          <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">Услуга</label>
+          <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">💅 Услуга</label>
           <select id="serviceSelect" required class="w-full p-5 border-2 border-purple-200/50 rounded-3xl focus:border-purple-400 focus:outline-none focus:ring-4 focus:ring-purple-200/30 bg-lavender-50/70 text-lg">
             <option value="">Выберите услугу</option>
-            <option value="Классика,1800,60">Классика - 1800₽, 60 мин</option>
-            <option value="Дизайн,2500,90">Дизайн - 2500₽, 90 мин</option>
-            <option value="Пастель,2200,75">Пастель - 2200₽, 75 мин</option>
-            <option value="SPA,3000,120">SPA - 3000₽, 120 мин</option>
+            <option value="1800|60">60 мин - 1800₽</option>
+            <option value="2500|90">90 мин - 2500₽</option>
+            <option value="2200|75">75 мин - 2200₽</option>
+            <option value="SPA|3000|120">120 мин SPA - 3000₽</option>
           </select>
         </div>
         <div>
-          <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">Дата</label>
+          <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">📅 Дата</label>
           <input type="date" id="bookingDate" required class="w-full p-5 border-2 border-amber-200/50 rounded-3xl focus:border-amber-400 focus:outline-none focus:ring-4 focus:ring-amber-200/30 bg-amber-50/70 text-lg">
         </div>
         <div>
-          <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">Время</label>
+          <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">🕒 Время</label>
           <div id="timeSlots" class="grid grid-cols-3 md:grid-cols-6 gap-3"></div>
         </div>
         <button type="submit" id="submitBtn" disabled class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-6 rounded-3xl text-2xl font-bold montserrat shadow-3xl hover:shadow-pink-600/60 hover:scale-1.02 transition-all duration-500 opacity-50 cursor-not-allowed">
@@ -172,7 +218,7 @@
   <!-- Add Slot Modal -->
   <div id="addSlotModal" class="modal">
     <div class="glass backdrop-blur-xl p-8 md:p-12 rounded-4xl shadow-3xl max-w-md w-full mx-4 max-h-90vh overflow-y-auto">
-      <h3 class="montserrat text-2xl font-black text-gray-800 mb-6 text-center">Добавить слот</h3>
+      <h3 class="montserrat text-2xl font-black text-gray-800 mb-6 text-center">➕ Добавить слот</h3>
       <div class="space-y-4">
         <div>
           <label class="block text-lg font-semibold mb-2 montserrat text-gray-800">Дата</label>
@@ -208,7 +254,7 @@
   <!-- Bulk Slots Modal -->
   <div id="bulkSlotsModal" class="modal">
     <div class="glass backdrop-blur-xl p-8 md:p-12 rounded-4xl shadow-3xl max-w-lg w-full mx-4 max-h-90vh overflow-y-auto">
-      <h3 class="montserrat text-2xl font-black text-gray-800 mb-6 text-center">Массовое добавление</h3>
+      <h3 class="montserrat text-2xl font-black text-gray-800 mb-6 text-center">🎯 Массовое добавление</h3>
       <div class="space-y-4">
         <div>
           <label class="block text-lg font-semibold mb-2 montserrat text-gray-800">Дата</label>
@@ -223,7 +269,7 @@
           <input type="time" id="endTime" value="20:00" class="w-full p-4 border-2 border-mint-200/50 rounded-3xl focus:border-mint-400 bg-mint-50/70 text-lg">
         </div>
         <div>
-          <label class="block text-lg font-semibold mb-2 montserrat text-gray-800">Шаг (мин)</label>
+          <label class="block text-lg font-semibold mb-2 montserrat text-gray-800">Шаг</label>
           <select id="slotStep" class="w-full p-4 border-2 border-amber-200/50 rounded-3xl focus:border-amber-400 bg-amber-50/70 text-lg">
             <option value="60">60 мин</option>
             <option value="90">90 мин</option>
@@ -249,7 +295,7 @@
       <div class="flex justify-between items-center mb-8">
         <h2 class="montserrat text-4xl font-black bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent flex items-center">
           <i class="fas fa-crown text-3xl mr-4 text-yellow-400"></i>
-          Pastel Nails Admin
+          Pastel Nails Админ
         </h2>
         <div class="flex gap-3">
           <button id="deleteSlotsBtn" onclick="toggleDeleteMode()" class="glass p-4 rounded-3xl text-xl hover:scale-110 transition-all shadow-xl border border-red-200 relative">
@@ -270,7 +316,7 @@
 
       <div id="deleteModeIndicator" class="glass p-4 rounded-3xl mb-6 text-center hidden">
         <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
-        <span class="font-bold text-red-600">РЕЖИМ УДАЛЕНИЯ</span>
+        <span class="font-bold text-red-600">РЕЖИМ УДАЛЕНИЯ!</span>
         <button onclick="toggleDeleteMode()" class="ml-4 px-4 py-1 bg-red-400 text-white rounded-xl text-sm font-bold hover:bg-red-500 transition-all">Выкл</button>
       </div>
 
@@ -280,8 +326,9 @@
             <h3 class="montserrat text-3xl font-bold text-gray-800 mb-2">Календарь</h3>
           </div>
           <div class="flex gap-2 text-sm text-gray-600">
-            <span>Слотов: <span id="totalSlots" class="font-bold text-teal-600">0</span></span>
-            <span>Записей: <span id="totalAppointments" class="font-bold text-purple-600">0</span></span>
+            <span>Дата: <span id="selectedDateAdmin" class="font-semibold text-lg text-pink-500"></span></span>
+            <span>| Слотов: <span id="totalSlots" class="font-bold text-teal-600">0</span></span>
+            <span>| Записей: <span id="totalAppointments" class="font-bold text-purple-600">0</span></span>
           </div>
         </div>
         <div class="flex gap-3">
@@ -295,7 +342,6 @@
             <i class="fas fa-chevron-right"></i>
           </button>
         </div>
-        <div id="selectedDateAdmin" class="font-semibold text-lg text-pink-500 mt-4"></div>
         <div id="adminTimeGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 mt-8"></div>
       </div>
 
@@ -334,6 +380,10 @@
     let selectedTimeSlot = null;
     let deleteMode = false;
     let unsubscribeSlots, unsubscribeAppts;
+    let adminAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
+
+    // Admin Password
+    const ADMIN_PASSWORD = 'masha3321';
 
     async function initFirebase() {
       try {
@@ -343,19 +393,19 @@
         slotsCol = window.firebase.collection(db, 'availableSlots');
         apptsCol = window.firebase.collection(db, 'appointments');
 
-        // Слушаем изменения слотов
+        // Listen for slots
         unsubscribeSlots = window.firebase.onSnapshot(slotsCol, (snapshot) => {
           availableSlots = {};
-          snapshot.forEach((doc) => {
+          snapshot.forEach(doc => {
             availableSlots[doc.id] = doc.data().slots;
           });
           updateDateSelect();
-          if (document.getElementById('adminPanel')?.classList.contains('active')) {
+          if (document.getElementById('adminPanel').classList.contains('active')) {
             updateAdminPanel();
           }
         });
 
-        // Слушаем изменения записей
+        // Listen for appointments
         unsubscribeAppts = window.firebase.onSnapshot(apptsCol, (snapshot) => {
           appointments = snapshot.docs.map(doc => ({
             id: doc.id,
@@ -364,16 +414,16 @@
           }));
           const bookingDate = document.getElementById('bookingDate')?.value;
           if (bookingDate) updateTimeSlots(bookingDate);
-          if (document.getElementById('adminPanel')?.classList.contains('active')) {
+          if (document.getElementById('adminPanel').classList.contains('active')) {
             updateAdminPanel();
           }
           updateStats();
         });
 
-        console.log('✅ Firebase инициализирован');
+        console.log('✅ Firebase подключен!');
       } catch (error) {
-        console.error('Firebase:', error);
-        alert('❌ Проверьте FIREBASE_CONFIG');
+        console.error('Firebase ошибка:', error);
+        alert('❌ Ошибка FIREBASE_CONFIG.');
       }
     }
 
@@ -387,7 +437,7 @@
     function init() {
       ensureMinFutureDate();
       updateDateSelect();
-      if (document.getElementById('adminPanel')?.classList.contains('active')) {
+      if (document.getElementById('adminPanel').classList.contains('active')) {
         updateAdminPanel();
       }
       updateStats();
@@ -404,7 +454,7 @@
       const select = document.getElementById('bookingDate');
       const currentValue = select.value;
       const availableDates = getAvailableDates();
-
+      
       select.innerHTML = '<option value="">Выберите дату</option>';
       availableDates.forEach(dateStr => {
         const date = new Date(dateStr + 'T00:00:00');
@@ -413,7 +463,7 @@
         option.textContent = date.toLocaleDateString('ru-RU', { weekday: 'short', month: 'short', day: 'numeric' });
         select.appendChild(option);
       });
-
+      
       if (availableDates.includes(currentValue)) {
         select.value = currentValue;
         updateTimeSlots(currentValue);
@@ -423,7 +473,7 @@
     function updateTimeSlots(dateStr) {
       if (!dateStr || !availableSlots[dateStr]) {
         const container = document.getElementById('timeSlots');
-        container.innerHTML = '<p class="col-span-full text-center text-gray-500 p-8 text-lg">Нет доступных слотов</p>';
+        container.innerHTML = '<p class="col-span-full text-center text-gray-500 p-8 text-lg">Свободных слотов нет</p>';
         document.getElementById('submitBtn').disabled = true;
         document.getElementById('submitBtn').classList.add('opacity-50', 'cursor-not-allowed');
         return;
@@ -431,21 +481,21 @@
 
       const container = document.getElementById('timeSlots');
       container.innerHTML = '';
-
+      
       availableSlots[dateStr].forEach(slotTime => {
-        const slotId = dateStr + 'T' + slotTime;
+        const slotId = dateStr + slotTime;
         const isBooked = appointments.some(apt => apt.slot === slotId);
-
+        
         const button = document.createElement('button');
         button.type = 'button';
         button.className = `p-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
           isBooked 
-            ? 'bg-rose-200 text-rose-600 cursor-not-allowed shadow-lg' 
+            ? 'bg-rose-200 text-rose-600 cursor-not-allowed shadow-lg'
             : 'glass border-2 border-pink-200/50 hover:border-pink-400 hover:shadow-xl hover:scale-105 bg-pink-50/70'
         }`;
         button.innerHTML = isBooked 
-          ? `${slotTime} <i class="fas fa-clock mr-2"></i>`
-          : slotTime;
+          ? `<i class="fas fa-clock mr-2"></i>${slotTime}`
+          : `<i class="fas fa-clock mr-2"></i>${slotTime}`;
         button.onclick = isBooked ? null : () => selectTimeSlot(slotId);
         container.appendChild(button);
       });
@@ -461,96 +511,45 @@
       document.getElementById('submitBtn').classList.remove('opacity-50', 'cursor-not-allowed');
     }
 
-    // ✅ ИСПРАВЛЕННЫЙ обработчик формы записи
     document.getElementById('bookingForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      
-      // ✅ Усиленная валидация
       if (!selectedTimeSlot) {
-        alert('❌ Выберите время из доступных слотов!');
-        return;
-      }
-      
-      const name = document.getElementById('clientName').value.trim();
-      const phone = document.getElementById('clientPhone').value.trim();
-      const serviceValue = document.getElementById('serviceSelect').value;
-      
-      if (!name || !phone || !serviceValue) {
-        alert('❌ Заполните все поля формы!');
+        alert('⚠️ Выберите время!');
         return;
       }
 
       const submitBtn = document.getElementById('submitBtn');
       submitBtn.classList.add('loading');
-      submitBtn.disabled = true;
 
       try {
-        // ✅ Проверяем, свободен ли слот (массив appointments из Firebase)
-        const isBooked = appointments.some(apt => apt.slot === selectedTimeSlot);
-        if (isBooked) {
-          alert('❌ Этот временной слот уже занят!');
-          return;
-        }
-
-        // ✅ Парсим данные услуги безопасно
-        const serviceData = serviceValue.split(',');
+        const serviceData = document.getElementById('serviceSelect').value.split('|');
         const appointment = {
-          name: name,
-          phone: phone,
-          service: serviceData[0]?.trim() || 'Неизвестно',
-          price: serviceData[1]?.trim() || '0',
-          duration: serviceData[2]?.trim() || '0',
-          slot: selectedTimeSlot,           // "2026-03-15T10:00"
+          name: document.getElementById('clientName').value,
+          phone: document.getElementById('clientPhone').value,
+          service: serviceData[0],
+          price: serviceData[1],
+          duration: serviceData[2],
+          slot: selectedTimeSlot,
           date: new Date().toLocaleDateString('ru-RU'),
-          slotDate: selectedTimeSlot.split('T')[0],      // "2026-03-15"
-          slotTime: selectedTimeSlot.split('T')[1]?.slice(0,5),  // "10:00"
+          slotDate: selectedTimeSlot.split('T')[0],
+          slotTime: selectedTimeSlot.split('T')[1]?.slice(0,5) || selectedTimeSlot.slice(-5),
           timestamp: Date.now(),
           status: 'new',
           createdAt: window.firebase.serverTimestamp()
         };
 
-        // ✅ 1. Создаем запись в Firebase Firestore
         await window.firebase.addDoc(apptsCol, appointment);
-        
-        // ✅ 2. Удаляем слот из availableSlots
-        const dateStr = selectedTimeSlot.split('T')[0];
-        let slotsData = availableSlots[dateStr] || [];
-        const slotTimeOnly = selectedTimeSlot.split('T')[1]; // Только время "10:00"
-        slotsData = slotsData.filter(time => time !== slotTimeOnly);
-        
-        if (slotsData.length === 0) {
-          // Удаляем пустую дату
-          await window.firebase.deleteDoc(window.firebase.doc(db, 'availableSlots', dateStr));
-          delete availableSlots[dateStr];
-        } else {
-          // Обновляем слоты для даты
-          await window.firebase.setDoc(window.firebase.doc(db, 'availableSlots', dateStr), { slots: slotsData });
-          availableSlots[dateStr] = slotsData;
-        }
-
-        // ✅ Успешная запись
-        alert('✅ Запись создана успешно! Мы свяжемся с вами для подтверждения.');
-        
-        // Сброс формы и состояния
+        alert('✅ Запись создана!');
         this.reset();
+        document.getElementById('submitBtn').disabled = true;
+        document.getElementById('submitBtn').classList.add('opacity-50', 'cursor-not-allowed');
         selectedTimeSlot = null;
-        
-        // Блокируем кнопку
-        submitBtn.disabled = true;
-        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-        
-        // Обновляем интерфейс
         updateTimeSlots(document.getElementById('bookingDate').value);
-        if (document.getElementById('adminPanel')?.classList.contains('active')) {
-          updateAdminPanel();
-        }
-
       } catch (error) {
-        console.error('Ошибка при создании записи:', error);
-        alert('❌ Ошибка при записи. Попробуйте позже или свяжитесь с нами напрямую.');
+        console.error('Ошибка записи:', error);
+        alert('❌ Ошибка создания записи.');
       } finally {
         submitBtn.classList.remove('loading');
-        submitBtn.disabled = false;
       }
     });
 
@@ -564,6 +563,40 @@
       document.getElementById('submitBtn').disabled = true;
       document.getElementById('submitBtn').classList.add('opacity-50', 'cursor-not-allowed');
     });
+
+    // Admin Password Functions
+    function checkAdminPassword() {
+      const password = document.getElementById('adminPassword').value;
+      if (password === ADMIN_PASSWORD) {
+        localStorage.setItem('adminAuthenticated', 'true');
+        adminAuthenticated = true;
+        closeAdminPasswordModal();
+        document.getElementById('adminPanel').classList.add('active');
+        updateAdminPanel();
+        alert('✅ Добро пожаловать в админ панель!');
+      } else {
+        alert('❌ Неверный пароль!');
+        document.getElementById('adminPassword').value = '';
+        document.getElementById('adminPassword').focus();
+      }
+    }
+
+    function closeAdminPasswordModal() {
+      document.getElementById('adminPasswordModal').classList.remove('active');
+      document.getElementById('adminPassword').value = '';
+    }
+
+    function toggleAdmin() {
+      if (!adminAuthenticated) {
+        document.getElementById('adminPasswordModal').classList.add('active');
+        document.getElementById('adminPassword').focus();
+        return;
+      }
+      document.getElementById('adminPanel').classList.toggle('active');
+      if (document.getElementById('adminPanel').classList.contains('active')) {
+        updateAdminPanel();
+      }
+    }
 
     function toggleDeleteMode() {
       deleteMode = !deleteMode;
@@ -582,13 +615,6 @@
         btn.title = 'Удаление слотов';
       }
       updateAdminPanel();
-    }
-
-    function toggleAdmin() {
-      document.getElementById('adminPanel').classList.toggle('active');
-      if (document.getElementById('adminPanel').classList.contains('active')) {
-        updateAdminPanel();
-      }
     }
 
     function openAddSlotModal() {
@@ -616,7 +642,7 @@
       const slotTime = hour + ':' + minute;
 
       if (!date) {
-        alert('❌ Выберите дату!');
+        alert('⚠️ Выберите дату!');
         return;
       }
 
@@ -634,8 +660,8 @@
         closeAddSlotModal();
         alert('✅ Слот добавлен!');
       } catch (error) {
-        console.error('Ошибка:', error);
-        alert('❌ Ошибка добавления');
+        console.error('Ошибка добавления слота:', error);
+        alert('❌ Ошибка.');
       }
     }
 
@@ -646,7 +672,7 @@
       const slotStep = parseInt(document.getElementById('slotStep').value);
 
       if (!dateStr) {
-        alert('❌ Выберите дату!');
+        alert('⚠️ Выберите дату!');
         return;
       }
 
@@ -663,7 +689,6 @@
             availableSlotsData.push(slotTime);
           }
         }
-
         availableSlotsData.sort();
         await window.firebase.setDoc(window.firebase.doc(db, 'availableSlots', dateStr), { slots: availableSlotsData });
 
@@ -674,30 +699,29 @@
         closeBulkSlotsModal();
         alert('✅ Слоты созданы!');
       } catch (error) {
-        console.error('Ошибка:', error);
-        alert('❌ Ошибка создания');
+        console.error('Ошибка массового создания:', error);
+        alert('❌ Ошибка.');
       }
     }
 
     async function deleteTimeSlot(dateStr, slotTime) {
-      if (!confirm(`Удалить слот ${slotTime} на ${new Date(dateStr).toLocaleDateString('ru-RU')}?`)) return;
+      if (!confirm(`Удалить слот ${slotTime} (${new Date(dateStr).toLocaleDateString('ru-RU')})?`)) return;
 
       try {
-        // Удаляем связанные записи
-        const slotAppointments = appointments.filter(apt => apt.slot === dateStr + 'T' + slotTime);
+        // Delete related appointments
+        const slotAppointments = appointments.filter(apt => apt.slot === dateStr + slotTime);
         for (const apt of slotAppointments) {
           await window.firebase.deleteDoc(window.firebase.doc(db, 'appointments', apt.id));
         }
 
+        // Delete slot
         let slotsData = availableSlots[dateStr] || [];
         slotsData = slotsData.filter(time => time !== slotTime);
-
+        
         if (slotsData.length === 0) {
           await window.firebase.deleteDoc(window.firebase.doc(db, 'availableSlots', dateStr));
-          delete availableSlots[dateStr];
         } else {
           await window.firebase.setDoc(window.firebase.doc(db, 'availableSlots', dateStr), { slots: slotsData });
-          availableSlots[dateStr] = slotsData;
         }
 
         updateDateSelect();
@@ -706,15 +730,13 @@
         if (currentClientDate) updateTimeSlots(currentClientDate);
         alert('✅ Слот удален!');
       } catch (error) {
-        console.error('Ошибка:', error);
-        alert('❌ Ошибка удаления');
+        console.error('Ошибка удаления:', error);
+        alert('❌ Ошибка.');
       }
     }
 
     function updateAdminPanel() {
-      document.getElementById('selectedDateAdmin').textContent = new Date(currentAdminDate).toLocaleDateString('ru-RU', {
-        weekday: 'long', month: 'long', day: 'numeric'
-      });
+      document.getElementById('selectedDateAdmin').textContent = new Date(currentAdminDate).toLocaleDateString('ru-RU', { weekday: 'long', month: 'long', day: 'numeric' });
       document.getElementById('totalSlots').textContent = Object.keys(availableSlots).length;
       document.getElementById('totalAppointments').textContent = appointments.length;
 
@@ -725,12 +747,12 @@
       const dateAppointments = appointments.filter(apt => apt.slot.startsWith(currentAdminDate));
 
       if (slotsForDate.length === 0) {
-        timeGrid.innerHTML = '<div class="col-span-full p-12 text-center text-gray-500 italic text-xl"><br>Нет слотов</div>';
+        timeGrid.innerHTML = '<div class="col-span-full p-12 text-center text-gray-500 italic text-xl"><br>Слоты не найдены</div>';
         return;
       }
 
       slotsForDate.forEach(slotTime => {
-        const slotId = currentAdminDate + 'T' + slotTime;
+        const slotId = currentAdminDate + slotTime;
         const slotAppointments = dateAppointments.filter(apt => apt.slot === slotId);
 
         const div = document.createElement('div');
@@ -741,14 +763,14 @@
           <div class="font-bold text-xl montserrat mb-2">${slotTime}</div>
           <div class="text-lg font-semibold mb-3">${slotAppointments.length}</div>
           ${slotAppointments.slice(0,2).map(apt => `<div class="text-sm bg-white/50 rounded-xl p-2 mb-1">${apt.name.slice(0,20)}${apt.name.length>20?'...':''}</div>`).join('')}
-          ${slotAppointments.length > 2 ? `<div class="text-xs text-white/80">${slotAppointments.length-2} ещё</div>` : ''}
-          ${deleteMode ? '<div class="mt-2 p-2 bg-red-100/80 rounded-xl text-red-600 text-sm font-bold">✕ Удалить</div>' : ''}
+          ${slotAppointments.length > 2 ? `<div class="text-xs text-white/80">+${slotAppointments.length-2}</div>` : ''}
+          ${deleteMode ? '<div class="mt-2 p-2 bg-red-100/80 rounded-xl text-red-600 text-sm font-bold">🗑️ Удалить</div>' : ''}
         `;
         div.onclick = deleteMode ? () => deleteTimeSlot(currentAdminDate, slotTime) : () => showSlotDetails(slotId, slotAppointments);
         timeGrid.appendChild(div);
       });
 
-      // Все записи
+      // Update appointments list
       const sortedAppointments = appointments
         .map(apt => ({ ...apt, fullDate: new Date(apt.slotDate + 'T' + apt.slotTime) }))
         .sort((a, b) => new Date(a.fullDate) - new Date(b.fullDate));
@@ -768,15 +790,13 @@
             </div>
             <div class="text-lg font-semibold text-gray-700 mb-2">${apt.service}</div>
             <div class="text-sm text-gray-600 mb-4">${apt.slot} ${apt.price}₽</div>
-            <div class="flex gap-2 ${
-              apt.status !== 'confirmed' ? '' : 'hidden'
-            }">
-              <button onclick="confirmAppointment('${apt.id}')" class="px-4 py-2 bg-green-400 text-white rounded-xl text-sm font-bold hover:bg-green-500 transition-all flex-1">Подтвердить</button>
+            <div class="flex gap-2">
+              ${apt.status !== 'confirmed' ? `<button onclick="confirmAppointment('${apt.id}')" class="px-4 py-2 bg-green-400 text-white rounded-xl text-sm font-bold hover:bg-green-500 transition-all flex-1">Подтвердить</button>` : ''}
               <button onclick="cancelAppointment('${apt.id}')" class="px-4 py-2 bg-rose-400 text-white rounded-xl text-sm font-bold hover:bg-rose-500 transition-all flex-1 ${apt.status === 'cancelled' ? 'hidden' : ''}">Отменить</button>
             </div>
           </div>
         `;
-      }).join('') || '<div class="p-12 text-center text-gray-500 italic text-xl col-span-full">Нет записей</div>';
+      }).join('') || '<div class="p-12 text-center text-gray-500 italic text-xl col-span-full">Записи не найдены</div>';
     }
 
     async function cancelAppointment(id) {
@@ -787,25 +807,24 @@
           return;
         }
       } else {
-        if (confirm('Отменить запись?')) {
-          const aptIndex = appointments.findIndex(a => a.id === id);
-          appointments[aptIndex].status = 'cancelled';
-          await window.firebase.updateDoc(window.firebase.doc(db, 'appointments', id), { status: 'cancelled' });
-          updateTimeSlots(document.getElementById('bookingDate')?.value);
-          alert('✅ Запись отменена');
-        }
+        if (!confirm('Отменить запись?')) return;
+        const aptIndex = appointments.findIndex(a => a.id === id);
+        appointments[aptIndex].status = 'cancelled';
+        await window.firebase.updateDoc(window.firebase.doc(db, 'appointments', id), { status: 'cancelled' });
+        updateTimeSlots(document.getElementById('bookingDate')?.value);
+        alert('✅ Запись отменена');
       }
     }
 
     async function confirmAppointment(id) {
       const apt = appointments.find(a => a.id === id);
       if (apt.status === 'confirmed') {
-        alert('✅ Уже подтверждено');
+        alert('✅ Уже подтверждено!');
         return;
       }
       apt.status = 'confirmed';
       await window.firebase.updateDoc(window.firebase.doc(db, 'appointments', id), { status: 'confirmed' });
-      alert('✅ Запись подтверждена');
+      alert('✅ Запись подтверждена!');
     }
 
     function prevAdminDate() {
@@ -832,7 +851,7 @@
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       const tomorrowStr = tomorrow.toISOString().split('T')[0];
-
+      
       document.getElementById('stats').textContent = appointments.filter(apt => apt.slotDate === today).length;
       document.getElementById('statsTomorrow').textContent = appointments.filter(apt => apt.slotDate === tomorrowStr).length;
     }
@@ -841,15 +860,20 @@
       alert(`${slotId}\nЗаписей: ${appointments.length}\n${appointments.map(a => a.name).join(', ')}`);
     }
 
-    // Модальные окна
+    // Event Listeners
     document.getElementById('addSlotModal').addEventListener('click', function(e) {
       if (e.target === this) closeAddSlotModal();
     });
+
     document.getElementById('bulkSlotsModal').addEventListener('click', function(e) {
       if (e.target === this) closeBulkSlotsModal();
     });
 
-    // Анимации
+    document.getElementById('adminPasswordModal').addEventListener('click', function(e) {
+      if (e.target === this) closeAdminPasswordModal();
+    });
+
+    // Smooth scroll & animations
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -859,7 +883,6 @@
     });
     document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
-    // Плавная прокрутка
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', function (e) {
         e.preventDefault();
