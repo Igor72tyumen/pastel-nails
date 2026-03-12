@@ -471,31 +471,76 @@
         }
 
         document.getElementById('bookingForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            if (!selectedTimeSlot) {
-                alert('Выберите время!');
-                return;
-            }
+  e.preventDefault()
+  if (!selectedTimeSlot) {
+    alert('Выберите время!')
+    return
+  }
 
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.classList.add('loading');
-            
-            try {
-                const serviceData = document.getElementById('serviceSelect').value.split('|');
-                const appointment = {
-                    name: document.getElementById('clientName').value,
-                    phone: document.getElementById('clientPhone').value,
-                    service: serviceData[0],
-                    price: serviceData[1],
-                    duration: serviceData[2],
-                    slot: selectedTimeSlot,
-                    date: new Date().toLocaleDateString('ru-RU'),
-                    slotDate: selectedTimeSlot.split('T')[0],
-                    slotTime: selectedTimeSlot.split('T')[1]?.slice(0,5) || selectedTimeSlot.slice(-5),
-                    timestamp: Date.now(),
-                    status: 'new',
-                    createdAt: window.firebase.serverTimestamp()
-                };
+  const submitBtn = document.getElementById('submitBtn')
+  submitBtn.classList.add('loading')
+
+  try {
+    // Проверяем, свободен ли слот
+    const isBooked = appointments.some(apt => apt.slot === selectedTimeSlot)
+    if (isBooked) {
+      alert('Этот слот уже занят!')
+      return
+    }
+
+    const serviceData = document.getElementById('serviceSelect').value.split(',')
+    const appointment = {
+      name: document.getElementById('clientName').value,
+      phone: document.getElementById('clientPhone').value,
+      service: serviceData[0].trim(),
+      price: serviceData[1].trim(),
+      duration: serviceData[2].trim(),
+      slot: selectedTimeSlot,  // "2026-03-15T10:00"
+      date: new Date().toLocaleDateString('ru-RU'),
+      slotDate: selectedTimeSlot.split('T')[0],  // "2026-03-15"
+      slotTime: selectedTimeSlot.split('T')[1]?.slice(0,5),  // "10:00"
+      timestamp: Date.now(),
+      status: 'new',
+      createdAt: window.firebase.serverTimestamp()
+    }
+
+    // ✅ 1. Создаем запись в appointments
+    await window.firebase.addDoc(apptsCol, appointment)
+    
+    // ✅ 2. Удаляем слот из availableSlots
+    const dateStr = selectedTimeSlot.split('T')[0]
+    let slotsData = availableSlots[dateStr] || []
+    slotsData = slotsData.filter(time => time !== selectedTimeSlot.split('T')[1])
+    
+    if (slotsData.length === 0) {
+      // Удаляем пустую дату
+      await window.firebase.deleteDoc(window.firebase.doc(db, 'availableSlots', dateStr))
+      delete availableSlots[dateStr]
+    } else {
+      // Обновляем слоты для даты
+      await window.firebase.setDoc(window.firebase.doc(db, 'availableSlots', dateStr), { slots: slotsData })
+      availableSlots[dateStr] = slotsData
+    }
+
+    alert('✅ Запись создана успешно!')
+    this.reset()
+    document.getElementById('submitBtn').disabled = true
+    document.getElementById('submitBtn').classList.add('opacity-50', 'cursor-not-allowed')
+    selectedTimeSlot = null
+    
+    // Обновляем интерфейс
+    updateTimeSlots(document.getElementById('bookingDate').value)
+    if (document.getElementById('adminPanel').classList.contains('active')) {
+      updateAdminPanel()
+    }
+
+  } catch (error) {
+    console.error('Ошибка записи:', error)
+    alert('Ошибка при записи. Попробуйте позже.')
+  } finally {
+    submitBtn.classList.remove('loading')
+  }
+});
 
                 await window.firebase.addDoc(apptsCol, appointment);
                 alert('✅ Запись создана! Мы свяжемся с вами для подтверждения.');
@@ -840,3 +885,4 @@
     </script>
 </body>
 </html>
+
