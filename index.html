@@ -1,1182 +1,690 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pastel Nails</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- FIREBASE v9 SDK -->
-    <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-        import { 
-            getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, query, where, onSnapshot, 
-            serverTimestamp, setDoc, orderBy, getStorage, ref, listAll, getDownloadURL, uploadBytes 
-        } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-        window.firebase = { initializeApp, getFirestore, collection, addDoc, getDocs, deleteDoc, updateDoc, doc, query, where, onSnapshot, serverTimestamp, setDoc, orderBy, getStorage, ref, listAll, getDownloadURL, uploadBytes };
-    </script>
-    
-    <!-- FullCalendar -->
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&family=Lora:italic&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- FIREBASE CONFIG -->
-    <script type="module">
-        window.FIREBASE_CONFIG = {
-            apiKey: "AIzaSyB4cVEKCpAo8-eNa5aBqzaA-AvKkBMxVpE",
-            authDomain: "pastelnails-7272.firebaseapp.com",
-            projectId: "pastelnails-7272",
-            storageBucket: "pastelnails-7272.firebasestorage.app",
-            messagingSenderId: "584452328728",
-            appId: "1584452328728web1fb147f90bf1eada09a26d"
+    <!-- Переменные для персонализации (редактируйте здесь) -->
+    <script>
+        window.WeddingData = {
+            bride: 'Анна',
+            groom: 'Иван',
+            date: '15 июня 2026',
+            location: 'Москва, Ресторан "Золотой Лебедь"',
+            address: 'Москва, ул. Тверская, 12',
+            ceremonyTime: '16:00',
+            banquetTime: '18:00',
+            email: 'annaivan.wedding@example.com',
+            formspreeEndpoint: 'https://formspree.io/f/YOUR_FORM_ID', // Замените на ваш ID
+            siteUrl: 'https://your-wedding-site.netlify.app'
         };
     </script>
 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Анна & Иван | Свадьба 15 июня 2026</title>
+    
+    <!-- SEO & Open Graph -->
+    <meta name="description" content="Анна и Иван приглашают вас на свою свадьбу 15 июня 2026 в Москве">
+    <meta property="og:title" content="Анна & Иван | Свадьба">
+    <meta property="og:description" content="С любовью приглашаем вас 15 июня 2026">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?w=1200">
+    <meta property="og:url" content="">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    
     <style>
-        body { font-family: 'Lora', serif; }
-        .montserrat { font-family: 'Montserrat', sans-serif; }
-        .hero-bg {
-            background: linear-gradient(135deg, #F8E1E9 0%, #E0F7F2 25%, #F3E8FF 50%, #FFF8E7 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+        :root {
+            --primary-gradient: linear-gradient(135deg, #f9e4e4 0%, #fce4d8 50%, #fff1e0 100%);
+            --accent-gold: #d4af37;
+            --accent-rose: #f8c8dc;
+            --text-dark: #2c1810;
+            --text-light: #6b4e31;
+            --bg-dark: linear-gradient(135deg, #2c1810 0%, #4a2c1a 100%);
+            --white: #ffffff;
         }
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+
+        [data-theme="dark"] {
+            --primary-gradient: var(--bg-dark);
+            --accent-gold: #f4d03f;
+            --accent-rose: #e91e63;
+            --text-dark: #f8f9fa;
+            --text-light: #e9ecef;
         }
-        .handwritten { font-family: 'Dancing Script', cursive; }
-        .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.8s ease; }
-        .fade-in.visible { opacity: 1; transform: translateY(0); }
-        .glass { backdrop-filter: blur(20px); background: rgba(255,255,255,0.25); }
 
-        /* Admin Panel Styles */
-        .admin-panel { display: none; }
-        .admin-panel.active { display: block; }
-
-        /* Admin Password Modal */
-        .admin-password-modal {
-            display: none; position: fixed; z-index: 10000; left: 0; top: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(10px);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .admin-password-modal.active { display: flex; align-items: center; justify-content: center; }
 
-        /* Modals */
-        .modal {
-            display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
+        body {
+            font-family: 'Montserrat', sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            overflow-x: hidden;
+            background: var(--primary-gradient);
+            transition: all 0.3s ease;
         }
-        .modal.active { display: flex; align-items: center; justify-content: center; }
 
-        .time-input { width: 80px; }
-        .delete-mode .admin-time-slot { border-color: #ef4444 !important; }
-        .delete-mode .admin-time-slot:hover { border-color: #dc2626 !important; background: rgba(239,68,68,0.1) !important; }
-        .loading { opacity: 0.6; pointer-events: none; }
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 700;
+        }
 
-        /* Reviews */
-        .review-star { color: #fbbf24; }
-        .gallery-img { max-height: 300px; object-fit: cover; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
 
-        /* Responsive table for appointments */
-        .appointments-table { overflow-x: auto; }
-        .appointments-table table { min-width: 1200px; border-collapse: collapse; }
-        .appointments-table th, .appointments-table td { padding: 12px; text-align: left; border-bottom: 1px solid rgba(0,0,0,0.1); }
-        .appointments-table th { background: rgba(255,255,255,0.5); font-weight: bold; position: sticky; top: 0; z-index: 10; }
+        /* Header & Theme Toggle */
+        header {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 15px;
+        }
+
+        .theme-toggle {
+            background: rgba(255,255,255,0.9);
+            border: none;
+            padding: 10px;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), 
+                        url('https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') center/cover;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin-bottom: 1rem;
+            opacity: 0;
+            transform: translateY(50px);
+            animation: fadeInUp 1.5s ease forwards;
+        }
+
+        .hero .date {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            margin-bottom: 2rem;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease 0.3s forwards;
+        }
+
+        .hero .teaser {
+            font-size: 1.5rem;
+            opacity: 0;
+            animation: fadeInUp 1.5s ease 0.6s forwards;
+            font-weight: 300;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scroll Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--accent-gold);
+        }
+
+        /* Love Story */
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .timeline-item {
+            text-align: center;
+            position: relative;
+        }
+
+        .timeline-item img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 20px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        /* Wedding Details */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .map-container {
+            height: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .timeline-day {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .event {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 2rem;
+            background: rgba(255,255,255,0.8);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .event-time {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            min-width: 80px;
+        }
+
+        /* RSVP Form */
+        .rsvp-form {
+            max-width: 600px;
+            margin: 3rem auto 0;
+            background: rgba(255,255,255,0.9);
+            padding: 3rem;
+            border-radius: 30px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #eee;
+            border-radius: 15px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+        }
+
+        .btn {
+            background: var(--accent-gold);
+            color: white;
+            border: none;
+            padding: 1.2rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px rgba(212,175,55,0.4);
+        }
+
+        /* Counter */
+        .counter {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .counter-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--accent-gold);
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .counter-btn:hover {
+            background: var(--accent-gold);
+            color: white;
+        }
+
+        /* Dress Code & FAQ */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--accent-rose), var(--accent-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0,0,0,0.8);
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-links a:hover {
+            color: var(--accent-gold);
+            transform: translateY(-3px);
+        }
+
+        /* QR Code */
+        .qr-container {
+            text-align: center;
+            margin: 2rem 0;
+        }
+
+        .qr-code {
+            width: 150px;
+            height: 150px;
+            background: #ddd;
+            margin: 0 auto 1rem;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                top: 15px;
+                right: 15px;
+            }
+            
+            section {
+                padding: 60px 0;
+            }
+            
+            .event {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+        }
+
+        /* Parallax */
+        .parallax {
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
     </style>
 </head>
-<body class="hero-bg min-h-screen text-gray-800">
-
-    <!-- Admin Password Modal -->
-    <div id="adminPasswordModal" class="admin-password-modal">
-        <div class="glass backdrop-blur-xl p-12 rounded-4xl shadow-3xl max-w-md w-full mx-4 text-center">
-            <h3 class="montserrat text-3xl font-black text-gray-800 mb-8">👑 Админ Панель</h3>
-            <p class="text-lg text-gray-700 mb-6">Введите пароль для доступа</p>
-            <div class="space-y-4">
-                <input type="password" id="adminPassword" class="w-full p-6 border-2 border-pink-200/50 rounded-3xl focus:border-pink-400 focus:outline-none focus:ring-4 focus:ring-pink-200/30 bg-pink-50/70 text-xl text-center font-mono tracking-wider placeholder-gray-500" placeholder="••••••••">
-            </div>
-            <div class="flex gap-3 pt-4">
-                <button onclick="checkAdminPassword()" class="flex-1 bg-gradient-to-r from-pink-500 to-purple-500 text-white py-6 rounded-3xl font-bold text-xl shadow-3xl hover:shadow-pink-600/60 hover:scale-105 transition-all duration-500">
-                    <i class="fas fa-crown mr-2"></i>Войти
-                </button>
-                <button onclick="closeAdminPasswordModal()" class="flex-1 glass py-6 rounded-3xl font-bold text-xl hover:shadow-xl transition-all border border-gray-200">
-                    <i class="fas fa-times mr-2"></i>Отмена
-                </button>
-            </div>
-            <p class="text-xs text-gray-500 mt-4">Пароль хранится в защищенном виде</p>
-        </div>
-    </div>
-
-    <!-- Admin Toggle Button -->
-    <div id="adminToggle" class="fixed top-6 right-6 z-50">
-        <button onclick="toggleAdmin()" class="glass p-4 rounded-3xl shadow-2xl text-2xl hover:scale-110 transition-all duration-300">
-            <i class="fas fa-crown text-yellow-500"></i>
+<body data-theme="light">
+    <!-- Theme Toggle -->
+    <header>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Переключить тему">
+            🌙
         </button>
-    </div>
+        <div class="qr-container">
+            <div class="qr-code">QR-код<br>сайта</div>
+        </div>
+    </header>
 
     <!-- Hero Section -->
-    <section class="hero-bg h-screen flex items-center justify-center text-center p-8 relative overflow-hidden pt-20">
-        <div class="absolute inset-0 bg-white/30"></div>
-        <div class="relative z-10 max-w-4xl mx-auto px-4">
-            <h1 class="montserrat text-4xl md:text-7xl lg:text-8xl font-black text-gray-800 mb-6 leading-tight drop-shadow-2xl">
-                Pastel Nails<br><span class="text-pink-400">Нежный маникюр</span>
-            </h1>
-            <p class="text-lg md:text-2xl lg:text-3xl text-gray-700 mb-12 font-light max-w-2xl mx-auto leading-relaxed">
-                Создаем идеальный маникюр в пастельных тонах. Онлайн запись 24/7.
-            </p>
-            <div class="flex flex-col sm:flex-row gap-4 justify-center items-center mb-20">
-                <a href="#booking" class="glass px-12 py-6 rounded-3xl text-xl font-bold montserrat text-white shadow-2xl hover:shadow-pink-500/50 transition-all duration-500 hover:scale-105 bg-gradient-to-r from-pink-400/80 to-rose-400/80 border-2 border-white/50">
-                    <i class="fas fa-calendar-check mr-3"></i>Записаться
-                </a>
+    <section class="hero parallax" id="hero">
+        <div class="container">
+            <h1 id="couple-names">Анна &amp; Иван</h1>
+            <div class="date" id="wedding-date">15 июня 2026</div>
+            <div class="teaser">С любовью приглашаем вас!</div>
+        </div>
+    </section>
+
+    <!-- Love Story -->
+    <section id="story" class="fade-in">
+        <div class="container">
+            <h2 class="section-title">Наша любовь</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <img src="https://images.unsplash.com/photo-1517457373958-b7bdd4587206?w=400" alt="Первая встреча">
+                    <h3>2020</h3>
+                    <p>Первая встреча в кофейне</p>
+                </div>
+                <div class="timeline-item">
+                    <img src="https://images.unsplash.com/photo-1556997746-8bc0db984e57?w=400" alt="Первое свидание">
+                    <h3>2020</h3>
+                    <p>Первое свидание в парке</p>
+                </div>
+                <div class="timeline-item">
+                    <img src="https://images.unsplash.com/photo-1570392222566-e8f1dfad77cc?w=400" alt="Предложение">
+                    <h3>2025</h3>
+                    <p>Предложение руки и сердца</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Gallery Section -->
-    <section id="gallery" class="py-24 px-6 max-w-7xl mx-auto fade-in">
-        <div class="text-center mb-20">
-            <h2 class="montserrat text-5xl md:text-6xl font-black text-gray-800 mb-6">Галерея работ</h2>
-            <div class="handwritten text-4xl text-pink-400 mb-4">Наши шедевры</div>
-        </div>
-        <div id="galleryContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div class="glass p-8 rounded-3xl shadow-2xl hover:shadow-3xl transition-all h-80 bg-gradient-to-br from-pink-100 to-rose-100 flex items-center justify-center">
-                <i class="fas fa-images text-6xl text-pink-400"></i>
-            </div>
-        </div>
-        <!-- Admin Upload Gallery -->
-        <div id="adminGalleryUpload" class="mt-8 hidden">
-            <div class="glass p-8 rounded-3xl">
-                <h3 class="montserrat text-2xl font-bold mb-6">Загрузить фото</h3>
-                <input type="file" id="galleryFile" accept="image/*" multiple class="w-full p-4 border-2 border-pink-200/50 rounded-3xl bg-pink-50/70">
-                <button onclick="uploadGalleryImage()" class="mt-4 w-full bg-gradient-to-r from-green-400 to-teal-400 text-white py-4 rounded-3xl font-bold hover:shadow-2xl transition-all">
-                    <i class="fas fa-upload mr-2"></i>Загрузить
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services Section -->
-    <section id="services" class="py-24 px-6 max-w-7xl mx-auto fade-in">
-        <div class="text-center mb-20">
-            <h2 class="montserrat text-5xl md:text-6xl font-black text-gray-800 mb-6">Услуги</h2>
-            <div class="handwritten text-4xl text-pink-400 mb-4">Выберите свой маникюр</div>
-        </div>
-        <div id="reviewsContainer" class="mb-12 grid md:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="glass p-10 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 border border-pink-100/50 service-card" data-price="1800" data-duration="60">
-                <div class="w-24 h-24 bg-gradient-to-br from-pink-200/80 to-rose-200/80 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl">
-                    <i class="fas fa-cut text-3xl text-pink-500"></i>
+    <!-- Wedding Details -->
+    <section id="details" class="fade-in">
+        <div class="container">
+            <h2 class="section-title">Детали торжества</h2>
+            <div class="details-grid">
+                <div>
+                    <h3>📍 Место</h3>
+                    <p><strong>Ресторан "Золотой Лебедь"</strong><br>
+                    Москва, ул. Тверская, 12</p>
+                    <div class="map-container">
+                        <iframe 
+                            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2245.283576389614!2d37.61674631632341!3d55.755814980458!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x46b54a5b295f7f01%3A0x4b63e9d1e3e6e3f9!2sRed%20Square%2C%20Moscow!5e0!3m2!1sen!2sus!4v1690000000000" 
+                            width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy">
+                        </iframe>
+                    </div>
                 </div>
-                <h3 class="montserrat text-3xl font-black text-gray-800 mb-4 text-center">Классика</h3>
-                <div class="text-4xl font-black text-pink-500 montserrat text-center mb-2">1800₽</div>
-                <div class="text-sm text-pink-400 font-semibold text-center">60 мин</div>
-            </div>
-            <div class="glass p-10 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 border border-purple-100/50 service-card" data-price="2500" data-duration="90">
-                <div class="w-24 h-24 bg-gradient-to-br from-purple-200/80 to-lavender-200/80 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl">
-                    <i class="fas fa-palette text-3xl text-purple-500"></i>
+                <div>
+                    <h3>⏰ Расписание</h3>
+                    <div class="timeline-day">
+                        <div class="event">
+                            <div class="event-time">16:00</div>
+                            <div>
+                                <h4>Церемония</h4>
+                                <p>Регистрация брака</p>
+                            </div>
+                        </div>
+                        <div class="event">
+                            <div class="event-time">18:00</div>
+                            <div>
+                                <h4>Банкет</h4>
+                                <p>Праздничный ужин и танцы</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h3 class="montserrat text-3xl font-black text-gray-800 mb-4 text-center">Дизайн</h3>
-                <div class="text-4xl font-black text-purple-500 montserrat text-center mb-2">2500₽</div>
-                <div class="text-sm text-purple-400 font-semibold text-center">90 мин</div>
-            </div>
-            <div class="glass p-10 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 border border-mint-100/50 service-card" data-price="2200" data-duration="75">
-                <div class="w-24 h-24 bg-gradient-to-br from-mint-200/80 to-teal-200/80 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl">
-                    <i class="fas fa-gem text-3xl text-teal-500"></i>
-                </div>
-                <h3 class="montserrat text-3xl font-black text-gray-800 mb-4 text-center">Стразы</h3>
-                <div class="text-4xl font-black text-teal-500 montserrat text-center mb-2">2200₽</div>
-                <div class="text-sm text-teal-400 font-semibold text-center">75 мин</div>
-            </div>
-            <div class="glass p-10 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 border border-yellow-100/50 service-card" data-price="3000" data-duration="120">
-                <div class="w-24 h-24 bg-gradient-to-br from-amber-200/80 to-yellow-200/80 rounded-3xl flex items-center justify-center mx-auto mb-8 shadow-xl">
-                    <i class="fas fa-spa text-3xl text-amber-500"></i>
-                </div>
-                <h3 class="montserrat text-3xl font-black text-gray-800 mb-4 text-center">SPA</h3>
-                <div class="text-4xl font-black text-amber-500 montserrat text-center mb-2">3000₽</div>
-                <div class="text-sm text-amber-400 font-semibold text-center">120 мин</div>
             </div>
         </div>
     </section>
 
-    <!-- Booking Section -->
-    <section id="booking" class="py-24 px-6 max-w-2xl mx-auto fade-in">
-        <div class="glass backdrop-blur-xl p-12 md:p-16 rounded-3xl shadow-3xl border border-white/50">
-            <div class="text-center mb-12">
-                <div class="handwritten text-5xl mb-4 mx-auto text-pink-400">Запишитесь онлайн</div>
-                <h2 class="montserrat text-4xl md:text-5xl font-black text-gray-800 mb-4">Онлайн запись</h2>
-            </div>
-            <form id="bookingForm" class="space-y-6">
-                <div>
-                    <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">👤 Имя</label>
-                    <input type="text" id="clientName" required class="w-full p-5 border-2 border-pink-200/50 rounded-3xl focus:border-pink-400 focus:outline-none focus:ring-4 focus:ring-pink-200/30 bg-pink-50/70 text-lg">
+    <!-- RSVP -->
+    <section id="rsvp" class="fade-in">
+        <div class="container">
+            <h2 class="section-title">Подтвердите участие</h2>
+            <form class="rsvp-form" id="rsvpForm">
+                <div class="form-group">
+                    <label>Ваше имя *</label>
+                    <input type="text" name="name" required>
                 </div>
-                <div>
-                    <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">📱 Телефон</label>
-                    <input type="tel" id="clientPhone" required class="w-full p-5 border-2 border-mint-200/50 rounded-3xl focus:border-mint-400 focus:outline-none focus:ring-4 focus:ring-mint-200/30 bg-mint-50/70 text-lg">
+                <div class="form-group">
+                    <label>Email или телефон</label>
+                    <input type="text" name="contact">
                 </div>
-                <div>
-                    <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">💅 Услуга</label>
-                    <select id="serviceSelect" required class="w-full p-5 border-2 border-purple-200/50 rounded-3xl focus:border-purple-400 focus:outline-none focus:ring-4 focus:ring-purple-200/30 bg-lavender-50/70 text-lg">
-                        <option value="">Выберите услугу</option>
-                        <option value="Классика, 1800, 60">60 мин - Классика - 1800₽</option>
-                        <option value="Дизайн, 2500, 90">90 мин - Дизайн - 2500₽</option>
-                        <option value="Стразы, 2200, 75">75 мин - Стразы - 2200₽</option>
-                        <option value="SPA, 3000, 120">120 мин - SPA - 3000₽</option>
-                    </select>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label>Взрослые</label>
+                        <div class="counter">
+                            <button type="button" class="counter-btn" onclick="updateCounter('adults', -1)">−</button>
+                            <span id="adults">0</span>
+                            <button type="button" class="counter-btn" onclick="updateCounter('adults', 1)">+</button>
+                        </div>
+                        <input type="hidden" name="adults" id="adultsInput" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Дети</label>
+                        <div class="counter">
+                            <button type="button" class="counter-btn" onclick="updateCounter('children', -1)">−</button>
+                            <span id="children">0</span>
+                            <button type="button" class="counter-btn" onclick="updateCounter('children', 1)">+</button>
+                        </div>
+                        <input type="hidden" name="children" id="childrenInput" value="0">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">📅 Дата</label>
-                    <div id="calendarContainer" class="p-6 bg-white/70 rounded-3xl border-2 border-amber-200/50"></div>
+                <div class="form-group">
+                    <label>Особые пожелания (аллергии, диета)</label>
+                    <textarea name="notes" rows="3" placeholder="Напишите, если есть аллергии или диетические ограничения"></textarea>
                 </div>
-                <div>
-                    <label class="block text-lg font-semibold mb-3 montserrat text-gray-800">🕒 Время</label>
-                    <div id="timeSlots" class="grid grid-cols-3 md:grid-cols-6 gap-3"></div>
-                </div>
-                <button type="submit" id="submitBtn" disabled class="w-full bg-gradient-to-r from-pink-500 to-purple-500 text-white py-6 rounded-3xl text-2xl font-bold montserrat shadow-3xl hover:shadow-pink-600/60 hover:scale-1.02 transition-all duration-500 opacity-50 cursor-not-allowed">
-                    <i class="fas fa-check mr-3"></i>Записаться
-                </button>
+                <button type="submit" class="btn">Подтвердить участие ❤️</button>
             </form>
         </div>
     </section>
 
-    <!-- Review Modal -->
-    <div id="reviewModal" class="modal">
-        <div class="glass backdrop-blur-xl p-8 md:p-12 rounded-4xl shadow-3xl max-w-md w-full mx-4 max-h-90vh overflow-y-auto">
-            <h3 class="montserrat text-2xl font-black text-gray-800 mb-6 text-center">⭐ Оставьте отзыв</h3>
-            <div class="space-y-4">
-                <div class="flex items-center space-x-1 text-sm">
-                    <div id="reviewStars" class="flex text-2xl cursor-pointer text-gray-300">
-                        <i class="fas fa-star review-star" data-rating="1"></i>
-                        <i class="fas fa-star review-star" data-rating="2"></i>
-                        <i class="fas fa-star review-star" data-rating="3"></i>
-                        <i class="fas fa-star review-star" data-rating="4"></i>
-                        <i class="fas fa-star review-star" data-rating="5"></i>
-                    </div>
-                    <span id="reviewRatingText" class="ml-2 text-lg font-bold text-pink-500">0</span>
+    <!-- Dress Code & FAQ -->
+    <section id="info" class="fade-in">
+        <div class="container">
+            <h2 class="section-title">Полезная информация</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <div class="feature-icon">👗</div>
+                    <h3>Дресс-код</h3>
+                    <ul style="text-align: left;">
+                        <li>Cocktail / Festive</li>
+                        <li>Для женщин: платья миди/макси</li>
+                        <li>Для мужчин: костюм/рубашка</li>
+                    </ul>
                 </div>
-                <textarea id="reviewText" rows="4" class="w-full p-4 border-2 border-pink-200/50 rounded-3xl focus:border-pink-400 bg-pink-50/70 text-lg resize-none" placeholder="Ваш отзыв..."></textarea>
-                <input type="hidden" id="reviewAppointmentId">
-            </div>
-            <div class="flex gap-3 pt-4">
-                <button onclick="submitReview()" class="flex-1 bg-gradient-to-r from-pink-400 to-rose-400 text-white py-4 rounded-3xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all">
-                    <i class="fas fa-star mr-2"></i>Отправить
-                </button>
-                <button onclick="closeReviewModal()" class="flex-1 glass py-4 rounded-3xl font-bold text-lg hover:shadow-xl transition-all border border-gray-200">
-                    <i class="fas fa-times mr-2"></i>Отмена
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Slot Modal -->
-    <div id="addSlotModal" class="modal">
-        <div class="glass backdrop-blur-xl p-8 md:p-12 rounded-4xl shadow-3xl max-w-md w-full mx-4 max-h-90vh overflow-y-auto">
-            <h3 class="montserrat text-2xl font-black text-gray-800 mb-6 text-center">Добавить слот</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-lg font-semibold mb-2 montserrat text-gray-800">Дата</label>
-                    <input type="date" id="slotDate" class="w-full p-4 border-2 border-pink-200/50 rounded-3xl focus:border-pink-400 bg-pink-50/70 text-lg">
+                <div class="feature">
+                    <div class="feature-icon">🎁</div>
+                    <h3>Подарки</h3>
+                    <ul style="text-align: left;">
+                        <li>Ваше присутствие — лучший подарок</li>
+                        <li>Медовый месяц: номер счёта</li>
+                    </ul>
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-gray-700">Часы</label>
-                        <input type="number" id="slotHour" min="0" max="23" class="time-input p-3 border-2 border-purple-200/50 rounded-2xl focus:border-purple-400 bg-purple-50/70 text-lg w-full" value="10">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold mb-2 text-gray-700">Минуты</label>
-                        <select id="slotMinute" class="time-input p-3 border-2 border-mint-200/50 rounded-2xl focus:border-mint-400 bg-mint-50/70 text-lg w-full">
-                            <option value="00">00</option>
-                            <option value="15">15</option>
-                            <option value="30">30</option>
-                            <option value="45">45</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="flex gap-3 pt-4">
-                <button onclick="addTimeSlot()" class="flex-1 bg-gradient-to-r from-green-400 to-teal-400 text-white py-4 rounded-3xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all">
-                    <i class="fas fa-plus mr-2"></i>Добавить
-                </button>
-                <button onclick="closeAddSlotModal()" class="flex-1 glass py-4 rounded-3xl font-bold text-lg hover:shadow-xl transition-all border border-gray-200">
-                    <i class="fas fa-times mr-2"></i>Отмена
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bulk Slots Modal -->
-    <div id="bulkSlotsModal" class="modal">
-        <div class="glass backdrop-blur-xl p-8 md:p-12 rounded-4xl shadow-3xl max-w-lg w-full mx-4 max-h-90vh overflow-y-auto">
-            <h3 class="montserrat text-2xl font-black text-gray-800 mb-6 text-center">Массовое добавление</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-lg font-semibold mb-2 montserrat text-gray-800">Дата</label>
-                    <input type="date" id="bulkDate" class="w-full p-4 border-2 border-pink-200/50 rounded-3xl focus:border-pink-400 bg-pink-50/70 text-lg">
-                </div>
-                <div>
-                    <label class="block text-lg font-semibold mb-2 montserrat text-gray-800">Начало</label>
-                    <input type="time" id="startTime" value="10:00" class="w-full p-4 border-2 border-purple-200/50 rounded-3xl focus:border-purple-400 bg-purple-50/70 text-lg">
-                </div>
-                <div>
-                    <label class="block text-lg font-semibold mb-2 montserrat text-gray-800">Конец</label>
-                    <input type="time" id="endTime" value="20:00" class="w-full p-4 border-2 border-mint-200/50 rounded-3xl focus:border-mint-400 bg-mint-50/70 text-lg">
-                </div>
-                <div>
-                    <label class="block text-lg font-semibold mb-2 montserrat text-gray-800">Шаг (мин)</label>
-                    <select id="slotStep" class="w-full p-4 border-2 border-amber-200/50 rounded-3xl focus:border-amber-400 bg-amber-50/70 text-lg">
-                        <option value="60">60 мин</option>
-                        <option value="90">90 мин</option>
-                        <option value="120">120 мин</option>
-                        <option value="150">150 мин</option>
-                    </select>
-                </div>
-            </div>
-            <div class="flex gap-3 pt-4">
-                <button onclick="bulkOpenSlots()" class="flex-1 bg-gradient-to-r from-green-400 to-teal-400 text-white py-4 rounded-3xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all">
-                    <i class="fas fa-magic mr-2"></i>Создать
-                </button>
-                <button onclick="closeBulkSlotsModal()" class="flex-1 glass py-4 rounded-3xl font-bold text-lg hover:shadow-xl transition-all border border-gray-200">
-                    <i class="fas fa-times mr-2"></i>Отмена
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Panel -->
-    <div id="adminPanel" class="admin-panel fixed top-0 left-0 w-full h-full hero-bg backdrop-blur-xl z-50 p-8 overflow-y-auto">
-        <div class="max-w-6xl mx-auto">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="montserrat text-4xl font-black bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent flex items-center">
-                    <i class="fas fa-crown text-3xl mr-4 text-yellow-400"></i>
-                    Pastel Nails Админка
-                </h2>
-                <div class="flex gap-3">
-                    <button id="deleteSlotsBtn" onclick="toggleDeleteMode()" class="glass p-4 rounded-3xl text-xl hover:scale-110 transition-all shadow-xl border border-red-200 relative" title="Режим удаления">
-                        <i class="fas fa-eraser text-red-500"></i>
-                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold">!</span>
-                    </button>
-                    <button onclick="openBulkSlotsModal()" class="glass p-4 rounded-3xl text-xl hover:scale-110 transition-all shadow-xl border border-green-200" title="Массовое добавление">
-                        <i class="fas fa-calendar-day text-green-500"></i>
-                    </button>
-                    <button onclick="openAddSlotModal()" class="glass p-4 rounded-3xl text-xl hover:scale-110 transition-all shadow-xl border border-blue-200" title="Добавить слот">
-                        <i class="fas fa-plus text-blue-500"></i>
-                    </button>
-                    <button onclick="toggleAdmin()" class="glass p-4 rounded-3xl text-2xl hover:scale-110 transition-all">
-                        <i class="fas fa-times text-gray-600"></i>
-                    </button>
-                </div>
-            </div>
-
-            <div id="deleteModeIndicator" class="glass p-4 rounded-3xl mb-6 text-center hidden">
-                <i class="fas fa-exclamation-triangle text-red-500 mr-2"></i>
-                <span class="font-bold text-red-600">Режим удаления включен!</span>
-                <button onclick="toggleDeleteMode()" class="ml-4 px-4 py-1 bg-red-400 text-white rounded-xl text-sm font-bold hover:bg-red-500 transition-all">Выкл</button>
-            </div>
-
-            <div class="bg-white/80 backdrop-blur-xl rounded-3xl p-8 shadow-3xl mb-8 border border-pink-200/50">
-                <div class="flex items-center justify-between mb-8">
-                    <h3 class="montserrat text-3xl font-bold text-gray-800 mb-2">Календарь</h3>
-                    <div class="flex gap-2 text-sm text-gray-600">
-                        <span>Слотов: <span id="totalSlots" class="font-bold text-teal-600">0</span></span>
-                        <span>Записей: <span id="totalAppointments" class="font-bold text-purple-600">0</span></span>
-                    </div>
-                </div>
-                <div class="flex gap-3">
-                    <button onclick="prevAdminDate()" class="p-3 rounded-2xl bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold hover:shadow-xl transition-all">
-                        <i class="fas fa-chevron-left"></i>
-                    </button>
-                    <button onclick="todayAdminDate()" class="px-6 py-3 rounded-2xl bg-gradient-to-r from-pink-400 to-purple-400 text-white font-bold shadow-xl hover:shadow-2xl transition-all">
-                        Сегодня
-                    </button>
-                    <button onclick="nextAdminDate()" class="p-3 rounded-2xl bg-gradient-to-r from-gray-400 to-gray-500 text-white font-bold hover:shadow-xl transition-all">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                </div>
-                <span id="selectedDateAdmin" class="font-semibold text-lg text-pink-500 block mt-4"></span>
-                <div id="adminTimeGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4 mt-8"></div>
-            </div>
-
-            <!-- Admin Gallery Controls -->
-            <div class="glass p-8 rounded-3xl mb-8 border border-blue-200/50">
-                <h3 class="montserrat text-2xl font-bold text-gray-800 mb-4 flex items-center">
-                    <i class="fas fa-images mr-3 text-blue-500"></i>Галерея
-                </h3>
-                <button onclick="toggleGalleryUpload()" class="bg-gradient-to-r from-blue-400 to-indigo-400 text-white px-6 py-3 rounded-2xl font-bold hover:shadow-2xl transition-all">
-                    <i class="fas fa-upload mr-2"></i>Управление галереей
-                </button>
-            </div>
-
-            <!-- Stats -->
-            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                <div class="glass p-8 rounded-3xl text-center hover:shadow-2xl transition-all border border-blue-200/50">
-                    <div class="text-4xl mb-4"><i class="fas fa-calendar-day text-blue-500"></i></div>
-                    <h4 class="montserrat text-xl font-bold mb-2 text-gray-800">Сегодня</h4>
-                    <div id="stats" class="text-3xl font-black text-teal-600 mb-1">0</div>
-                </div>
-                <div class="glass p-8 rounded-3xl text-center hover:shadow-2xl transition-all border border-purple-200/50">
-                    <div class="text-4xl mb-4"><i class="fas fa-calendar-day text-purple-500"></i></div>
-                    <h4 class="montserrat text-xl font-bold mb-2 text-gray-800">Завтра</h4>
-                    <div id="statsTomorrow" class="text-3xl font-black text-purple-600 mb-1">0</div>
-                </div>
-            </div>
-
-            <!-- All Appointments -->
-            <div class="mt-12">
-                <h4 class="montserrat text-2xl font-bold text-gray-800 flex items-center mb-6">
-                    <i class="fas fa-list text-pink-400 mr-3"></i>
-                    Все записи
-                    <i class="fas fa-sort text-xs ml-2 text-gray-400" title="Сортировка по дате"></i>
-                </h4>
-                <div id="allAppointmentsList" class="appointments-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Дата/Время</th>
-                                <th>Клиент</th>
-                                <th>Телефон</th>
-                                <th>Услуга</th>
-                                <th>Цена</th>
-                                <th>Длительность</th>
-                                <th>Статус</th>
-                                <th>Действия</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="feature">
+                    <div class="feature-icon">❓</div>
+                    <h3>FAQ</h3>
+                    <ul style="text-align: left;">
+                        <li>Парковка: у ресторана</li>
+                        <li>Фото: разрешена съёмка</li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="container">
+            <h3>Связаться с нами</h3>
+            <p>annaivan.wedding@example.com</p>
+            <div class="social-links">
+                <a href="#">📸 Instagram</a>
+                <a href="#">💌 Telegram</a>
+                <a href="#">📱 WhatsApp</a>
+            </div>
+            <p>Сайт создан с ❤️ в Perplexity Spaces</p>
+        </div>
+    </footer>
 
     <script>
-        // Firebase
-        let db, slotsCol, apptsCol, reviewsCol, storage;
-        let appointments = [];
-        let availableSlots = {};
-        let currentAdminDate = new Date().toISOString().split('T')[0];
-        let selectedTimeSlot = null;
-        let deleteMode = false;
-        let unsubscribeSlots, unsubscribeAppts, unsubscribeReviews;
-        let adminAuthenticated = localStorage.getItem('adminAuthenticated') === 'true';
-        
-        // Admin Password (hashed)
-        const ADMIN_PASSWORD_HASH = '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi'; // hashed 'password'
-        
-        async function initFirebase() {
-            try {
-                const firebaseConfig = window.FIREBASE_CONFIG;
-                const app = window.firebase.initializeApp(firebaseConfig);
-                db = window.firebase.getFirestore(app);
-                storage = window.firebase.getStorage(app);
-                slotsCol = window.firebase.collection(db, 'availableSlots');
-                apptsCol = window.firebase.collection(db, 'appointments');
-                reviewsCol = window.firebase.collection(db, 'reviews');
-
-                // Listen for slots
-                unsubscribeSlots = window.firebase.onSnapshot(slotsCol, (snapshot) => {
-                    availableSlots = {};
-                    snapshot.forEach(doc => {
-                        availableSlots[doc.id] = doc.data().slots || [];
-                    });
-                    updateDateSelect();
-                    if (document.getElementById('adminPanel')?.classList.contains('active')) updateAdminPanel();
-                });
-
-                // Listen for appointments
-                unsubscribeAppts = window.firebase.onSnapshot(apptsCol, (snapshot) => {
-                    appointments = snapshot.docs.map(doc => ({
-                        id: doc.id,
-                        ...doc.data(),
-                        createdAt: doc.data().createdAt ? doc.data().createdAt.toDate() : new Date(),
-                        timestamp: doc.data().timestamp || 0
-                    }));
-                    const bookingDate = document.getElementById('bookingDate')?.value;
-                    if (bookingDate) updateTimeSlots(bookingDate);
-                    if (document.getElementById('adminPanel')?.classList.contains('active')) {
-                        updateAdminPanel();
-                        updateAppointmentsTable();
-                        updateStats();
-                    }
-                });
-
-                // Listen for reviews
-                unsubscribeReviews = window.firebase.onSnapshot(reviewsCol, () => {
-                    loadReviews();
-                });
-
-                // Load gallery
-                loadGallery();
-
-                console.log('Firebase initialized!');
-            } catch (error) {
-                console.error('Firebase:', error);
-                alert('Проверьте FIREBASE_CONFIG');
-            }
-        }
-
-        function getAvailableDates() {
-            const today = new Date().toISOString().split('T')[0];
-            return Object.keys(availableSlots)
-                .filter(date => date >= today)
-                .slice(0, 30);
-        }
-
-        function init() {
-            ensureMinFutureDate();
-            updateDateSelect();
-            if (document.getElementById('adminPanel')?.classList.contains('active')) {
-                updateAdminPanel();
-                updateStats();
-            }
-            initCalendar();
-            initFirebase();
-        }
-
-        function ensureMinFutureDate() {
-            const today = new Date();
-            const minDate = today.toISOString().split('T')[0];
-            // FullCalendar handles this
-        }
-
-        function initCalendar() {
-            const container = document.getElementById('calendarContainer');
-            const calendar = new FullCalendar.Calendar(container, {
-                initialView: 'dayGridMonth',
-                validRange: {
-                    start: new Date()
-                },
-                headerToolbar: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: 'dayGridMonth,timeGridWeek'
-                },
-                locale: 'ru',
-                events: [],
-                dateClick: function(info) {
-                    const dateStr = info.dateStr;
-                    calendar.gotoDate(info.date);
-                    updateTimeSlots(dateStr);
-                },
-                eventClick: function(info) {
-                    alert('Запись: ' + info.event.title);
-                }
-            });
-            calendar.render();
-            window.calendar = calendar;
-
-            // Update events from appointments
-            updateCalendarEvents();
-        }
-
-        function updateCalendarEvents() {
-            if (window.calendar) {
-                const events = appointments.map(apt => ({
-                    title: `${apt.name} - ${apt.service}`,
-                    start: apt.slot,
-                    backgroundColor: apt.status === 'confirmed' ? '#10b981' : apt.status === 'cancelled' ? '#ef4444' : '#f59e0b'
-                }));
-                window.calendar.removeAllEvents();
-                window.calendar.addEventSource(events);
-            }
-        }
-
-        function updateDateSelect() {
-            // Calendar replaces date input
-        }
-
-        function updateTimeSlots(dateStr) {
-            if (!dateStr || !availableSlots[dateStr]) {
-                const container = document.getElementById('timeSlots');
-                container.innerHTML = '<p class="col-span-full text-center text-gray-500 p-8 text-lg">Слоты недоступны</p>';
-                document.getElementById('submitBtn').disabled = true;
-                document.getElementById('submitBtn').classList.add('opacity-50', 'cursor-not-allowed');
-                return;
-            }
-
-            const container = document.getElementById('timeSlots');
-            container.innerHTML = '';
-            availableSlots[dateStr].forEach(slotTime => {
-                const slotId = dateStr + 'T' + slotTime;
-                const isBooked = appointments.some(apt => apt.slot === slotId);
-                
-                const button = document.createElement('button');
-                button.type = 'button';
-                button.className = `p-4 rounded-2xl font-bold text-lg transition-all duration-300 ${
-                    isBooked ? 
-                    'bg-rose-200 text-rose-600 cursor-not-allowed shadow-lg glass border-2 border-pink-200/50 hover:border-pink-400 hover:shadow-xl hover:scale-105' :
-                    'bg-gradient-to-r from-purple-400 to-pink-400 text-white border-purple-400 hover:shadow-xl hover:scale-105 bg-pink-50/70'
-                }`;
-                button.innerHTML = isBooked ? 
-                    `<i class="fas fa-clock mr-2"></i>${slotTime}` :
-                    `<i class="fas fa-clock mr-2"></i>${slotTime}`;
-                button.onclick = isBooked ? null : () => selectTimeSlot(slotId);
-                container.appendChild(button);
-            });
-        }
-
-        function selectTimeSlot(slotId) {
-            selectedTimeSlot = slotId;
-            document.querySelectorAll('#timeSlots button').forEach(btn => {
-                btn.classList.remove('bg-gradient-to-r', 'from-purple-400', 'to-pink-400', 'text-white', 'border-purple-400', 'ring-4', 'ring-purple-200/50');
-            });
-            event.target.classList.add('bg-gradient-to-r', 'from-purple-400', 'to-pink-400', 'text-white', 'border-purple-400', 'ring-4', 'ring-purple-200/50');
-            document.getElementById('submitBtn').disabled = false;
-            document.getElementById('submitBtn').classList.remove('opacity-50', 'cursor-not-allowed');
-        }
-
-        document.getElementById('bookingForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            if (!selectedTimeSlot) {
-                alert('Выберите время!');
-                return;
-            }
-
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.classList.add('loading');
-
-            try {
-                const serviceData = document.getElementById('serviceSelect').value.split(',');
-                const appointment = {
-                    name: document.getElementById('clientName').value,
-                    phone: document.getElementById('clientPhone').value,
-                    service: serviceData[0].trim(),
-                    price: serviceData[1].trim(),
-                    duration: parseInt(serviceData[2]) || 60,
-                    slot: selectedTimeSlot,
-                    date: new Date().toLocaleDateString('ru-RU'),
-                    slotDate: selectedTimeSlot.split('T')[0],
-                    slotTime: selectedTimeSlot.split('T')[1]?.slice(0,5) || selectedTimeSlot.slice(-5),
-                    timestamp: Date.now(),
-                    status: 'new',
-                    createdAt: window.firebase.serverTimestamp()
-                };
-
-                await window.firebase.addDoc(apptsCol, appointment);
-                alert('✅ Запись создана! Telegram уведомление отправлено.');
-                sendTelegramNotification(appointment);
-                this.reset();
-                document.getElementById('submitBtn').disabled = true;
-                document.getElementById('submitBtn').classList.add('opacity-50', 'cursor-not-allowed');
-                selectedTimeSlot = null;
-                updateTimeSlots(document.getElementById('bookingDate')?.value);
-                if (window.calendar) updateCalendarEvents();
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Ошибка при записи');
-            } finally {
-                submitBtn.classList.remove('loading');
-            }
+        // Инициализация персональных данных
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('couple-names').textContent = 
+                `${window.WeddingData.bride} & ${window.WeddingData.groom}`;
+            document.getElementById('wedding-date').textContent = window.WeddingData.date;
         });
 
-        // Telegram Notifications
-        function sendTelegramNotification(appointment) {
-            const botToken = 'YOUR_BOT_TOKEN'; // Замените на ваш токен
-            const chatId = 'YOUR_CHAT_ID'; // Замените на ваш chat ID
-            const message = `🔔 Новая запись!\n👤 ${appointment.name}\n📞 ${appointment.phone}\n💅 ${appointment.service}\n💰 ${appointment.price}\n📅 ${appointment.date} ${appointment.slotTime}`;
-            
-            fetch(`https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(message)}`)
-                .then(() => console.log('Telegram notification sent'))
-                .catch(err => console.error('Telegram error:', err));
+        // Theme Toggle
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
         }
 
-        document.getElementById('serviceSelect').addEventListener('change', function() {
-            updateTimeSlots(document.getElementById('bookingDate')?.value);
-        });
-
-        // Admin Password Functions
-        function checkAdminPassword() {
-            const password = document.getElementById('adminPassword').value;
-            // Simple hash check (in production use proper server-side auth)
-            if (password === 'masha3321') { // Keep original for now, hash in production
-                localStorage.setItem('adminAuthenticated', 'true');
-                adminAuthenticated = true;
-                closeAdminPasswordModal();
-                document.getElementById('adminPanel').classList.add('active');
-                updateAdminPanel();
-                alert('✅ Добро пожаловать, администратор!');
-            } else {
-                alert('❌ Неверный пароль!');
-                document.getElementById('adminPassword').value = '';
-                document.getElementById('adminPassword').focus();
-            }
+        // Load saved theme
+        if (localStorage.getItem('theme')) {
+            document.body.setAttribute('data-theme', localStorage.getItem('theme'));
         }
 
-        function closeAdminPasswordModal() {
-            document.getElementById('adminPasswordModal').classList.remove('active');
-            document.getElementById('adminPassword').value = '';
+        // Counter functions
+        function updateCounter(type, delta) {
+            const current = parseInt(document.getElementById(type).textContent);
+            const newValue = Math.max(0, current + delta);
+            document.getElementById(type).textContent = newValue;
+            document.getElementById(type + 'Input').value = newValue;
         }
 
-        function toggleAdmin() {
-            if (!adminAuthenticated) {
-                document.getElementById('adminPasswordModal').classList.add('active');
-                document.getElementById('adminPassword').focus();
-                return;
-            }
-            document.getElementById('adminPanel').classList.toggle('active');
-            if (document.getElementById('adminPanel').classList.contains('active')) {
-                updateAdminPanel();
-            }
-        }
+        // Fade-in on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
 
-        function toggleDeleteMode() {
-            deleteMode = !deleteMode;
-            const btn = document.getElementById('deleteSlotsBtn');
-            const indicator = document.getElementById('deleteModeIndicator');
-            if (deleteMode) {
-                document.body.classList.add('delete-mode');
-                btn.classList.add('bg-red-100', 'border-red-400');
-                indicator.classList.remove('hidden');
-                btn.title = 'Выключить удаление';
-            } else {
-                document.body.classList.remove('delete-mode');
-                btn.classList.remove('bg-red-100', 'border-red-400');
-                indicator.classList.add('hidden');
-                btn.title = 'Включить удаление';
-            }
-            updateAdminPanel();
-        }
-
-        function openAddSlotModal() {
-            document.getElementById('slotDate').value = currentAdminDate;
-            document.getElementById('addSlotModal').classList.add('active');
-        }
-
-        function closeAddSlotModal() {
-            document.getElementById('addSlotModal').classList.remove('active');
-        }
-
-        function openBulkSlotsModal() {
-            document.getElementById('bulkDate').value = currentAdminDate;
-            document.getElementById('bulkSlotsModal').classList.add('active');
-        }
-
-        function closeBulkSlotsModal() {
-            document.getElementById('bulkSlotsModal').classList.remove('active');
-        }
-
-        async function addTimeSlot() {
-            const date = document.getElementById('slotDate').value;
-            const hour = document.getElementById('slotHour').value.padStart(2, '0');
-            const minute = document.getElementById('slotMinute').value.padStart(2, '0');
-            const slotTime = hour + ':' + minute;
-
-            if (!date) {
-                alert('Выберите дату!');
-                return;
-            }
-
-            try {
-                let slotData = availableSlots[date] || [];
-                if (!slotData.includes(slotTime)) {
-                    slotData.push(slotTime);
-                    slotData.sort();
-                    await window.firebase.setDoc(window.firebase.doc(db, 'availableSlots', date), { slots: slotData });
-                }
-                updateDateSelect();
-                const currentClientDate = document.getElementById('bookingDate')?.value;
-                if (currentClientDate) updateTimeSlots(currentClientDate);
-                updateAdminPanel();
-                closeAddSlotModal();
-                alert('✅ Слот добавлен!');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Ошибка!');
-            }
-        }
-
-        async function bulkOpenSlots() {
-            const dateStr = document.getElementById('bulkDate').value;
-            const startTime = document.getElementById('startTime').value;
-            const endTime = document.getElementById('endTime').value;
-            const slotStep = parseInt(document.getElementById('slotStep').value);
-
-            if (!dateStr) {
-                alert('Выберите дату!');
-                return;
-            }
-            if (!confirm(`Создать слоты с ${startTime} до ${endTime}, шаг ${slotStep} мин?`)) return;
-
-            try {
-                let availableSlotsData = availableSlots[dateStr] || [];
-                const start = new Date('2000-01-01T' + startTime);
-                const end = new Date('2000-01-01T' + endTime);
-
-                for (let time = new Date(start); time < end; time.setMinutes(time.getMinutes() + slotStep)) {
-                    const slotTime = time.toTimeString().slice(0, 5);
-                    if (new Date('2000-01-01T' + slotTime) < end && !availableSlotsData.includes(slotTime)) {
-                        availableSlotsData.push(slotTime);
-                    }
-                }
-                availableSlotsData.sort();
-                await window.firebase.setDoc(window.firebase.doc(db, 'availableSlots', dateStr), { slots: availableSlotsData });
-
-                updateDateSelect();
-                const currentClientDate = document.getElementById('bookingDate')?.value;
-                if (currentClientDate) updateTimeSlots(currentClientDate);
-                updateAdminPanel();
-                closeBulkSlotsModal();
-                alert('✅ Слоты созданы!');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Ошибка!');
-            }
-        }
-
-        async function deleteTimeSlot(dateStr, slotTime) {
-            if (!confirm(`Удалить слот ${slotTime} (${new Date(dateStr).toLocaleDateString('ru-RU')})?`)) return;
-
-            try {
-                // Delete related appointments
-                const slotAppointments = appointments.filter(apt => apt.slot === dateStr + 'T' + slotTime);
-                for (const apt of slotAppointments) {
-                    await window.firebase.deleteDoc(window.firebase.doc(db, 'appointments', apt.id));
-                }
-
-                // Delete slot
-                let slotsData = availableSlots[dateStr] || [];
-                slotsData = slotsData.filter(time => time !== slotTime);
-                if (slotsData.length === 0) {
-                    await window.firebase.deleteDoc(window.firebase.doc(db, 'availableSlots', dateStr));
-                } else {
-                    await window.firebase.setDoc(window.firebase.doc(db, 'availableSlots', dateStr), { slots: slotsData });
-                }
-
-                updateDateSelect();
-                updateAdminPanel();
-                const currentClientDate = document.getElementById('bookingDate')?.value;
-                if (currentClientDate) updateTimeSlots(currentClientDate);
-                alert('✅ Слот удален!');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Ошибка!');
-            }
-        }
-
-        function updateAdminPanel() {
-            document.getElementById('selectedDateAdmin').textContent = new Date(currentAdminDate).toLocaleDateString('ru-RU', {
-                weekday: 'long', month: 'long', day: 'numeric'
-            });
-            document.getElementById('totalSlots').textContent = Object.keys(availableSlots).length;
-            document.getElementById('totalAppointments').textContent = appointments.length;
-
-            const timeGrid = document.getElementById('adminTimeGrid');
-            timeGrid.innerHTML = '';
-
-            const slotsForDate = availableSlots[currentAdminDate] || [];
-            const dateAppointments = appointments.filter(apt => apt.slot?.startsWith(currentAdminDate));
-
-            if (!slotsForDate || slotsForDate.length === 0) {
-                timeGrid.innerHTML = '<div class="col-span-full p-12 text-center text-gray-500 italic text-xl"><br>Слоты не созданы</div>';
-                return;
-            }
-
-            slotsForDate.forEach(slotTime => {
-                const slotId = currentAdminDate + 'T' + slotTime;
-                const slotAppointments = dateAppointments.filter(apt => apt.slot === slotId);
-
-                const div = document.createElement('div');
-                div.className = `admin-time-slot p-6 rounded-3xl border-2 transition-all cursor-pointer hover:shadow-2xl shadow-lg ${
-                    deleteMode ? 'delete-ready' : ''
-                } ${slotAppointments.length ? 
-                    'bg-gradient-to-r from-rose-400/80 to-pink-400/80 text-white border-rose-300' : 
-                    'bg-gradient-to-r from-emerald-100/80 to-teal-100/80 border-emerald-200/50'
-                }`;
-                div.innerHTML = `
-                    <div class="font-bold text-xl montserrat mb-2">${slotTime}</div>
-                    <div class="text-lg font-semibold mb-3">${slotAppointments.length}</div>
-                    ${slotAppointments.slice(0,2).map(apt => 
-                        `<div class="text-sm bg-white/50 rounded-xl p-2 mb-1">${apt.name.slice(0,20)}${apt.name.length>20?'...':''}</div>`
-                    ).join('')}
-                    ${slotAppointments.length > 2 ? `<div class="text-xs text-white/80">${slotAppointments.length-2} ещё</div>` : ''}
-                    ${deleteMode ? '<div class="mt-2 p-2 bg-red-100/80 rounded-xl text-red-600 text-sm font-bold">УДАЛИТЬ</div>' : ''}
-                `;
-                div.onclick = deleteMode ? () => deleteTimeSlot(currentAdminDate, slotTime) : () => showSlotDetails(slotId, slotAppointments);
-                timeGrid.appendChild(div);
-            });
-
-            updateAppointmentsTable();
-        }
-
-        function updateAppointmentsTable() {
-            const tbody = document.querySelector('#allAppointmentsList tbody');
-            if (!tbody) return;
-
-            // Group appointments by date
-            const appointmentsByDate = {};
-            appointments.forEach(apt => {
-                const dateKey = apt.slotDate || apt.slot?.split('T')[0];
-                if (!appointmentsByDate[dateKey]) appointmentsByDate[dateKey] = [];
-                appointmentsByDate[dateKey].push(apt);
-            });
-
-            // Sort dates
-            const sortedDates = Object.keys(appointmentsByDate).sort((a, b) => new Date(a) - new Date(b));
-            tbody.innerHTML = '';
-
-            // Show last 2 weeks max
-            sortedDates.slice(-14).forEach(dateKey => {
-                const dateAppts = appointmentsByDate[dateKey];
-                dateAppts.sort((a, b) => (a.slotTime || '').localeCompare(b.slotTime || '') || 0);
-                dateAppts.slice(0, 10).forEach(apt => { // Max 10 per day
-                    const statusIcon = apt.status === 'confirmed' ? '✅' : 
-                                     apt.status === 'cancelled' ? '❌' : '⏳';
-                    const row = document.createElement('tr');
-                    row.className = `group hover:bg-gray-50/50 transition-all ${
-                        apt.status === 'confirmed' ? 'border-l-4 border-green-400 bg-green-50/80' :
-                        apt.status === 'cancelled' ? 'border-l-4 border-rose-400 bg-rose-50/80' :
-                        'border-l-4 border-yellow-400 bg-yellow-50/80'
-                    }`;
-                    row.innerHTML = `
-                        <td class="font-semibold text-pink-600">${apt.slotTime} ${apt.slotDate ? new Date(apt.slotDate).toLocaleDateString('ru-RU', {day: '2-digit', month: '2-digit'}) : new Date(apt.slot || apt.date).toLocaleDateString('ru-RU')}</td>
-                        <td class="font-bold montserrat">${apt.name}</td>
-                        <td>${apt.phone}</td>
-                        <td>${apt.service}</td>
-                        <td class="font-bold text-lg text-teal-600">${apt.price}</td>
-                        <td>${apt.duration} мин</td>
-                        <td class="text-2xl">${statusIcon}</td>
-                        <td class="flex gap-2">
-                            ${apt.status !== 'confirmed' ? 
-                                `<button onclick="confirmAppointment('${apt.id}')" class="px-4 py-2 bg-green-400 text-white rounded-xl text-sm font-bold hover:bg-green-500 transition-all flex-1">Подтвердить</button>` : ''
-                            }
-                            <button onclick="cancelAppointment('${apt.id}')" class="px-4 py-2 bg-rose-400 text-white rounded-xl text-sm font-bold hover:bg-rose-500 transition-all flex-1">${apt.status === 'cancelled' ? 'Удалить' : 'Отменить'}</button>
-                            ${apt.status === 'confirmed' ? 
-                                `<button onclick="showReviewModal('${apt.id}')" class="px-4 py-2 bg-blue-400 text-white rounded-xl text-sm font-bold hover:bg-blue-500 transition-all flex-1">Отзыв</button>` : ''
-                            }
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            });
-
-            if (sortedDates.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="p-12 text-center text-gray-500 italic text-xl">Записи отсутствуют</td></tr>';
-            }
-        }
-
-        async function deleteAppointment(id) {
-            if (!confirm('Удалить запись?')) return;
-            try {
-                await window.firebase.deleteDoc(window.firebase.doc(db, 'appointments', id));
-                alert('✅ Запись удалена!');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Ошибка!');
-            }
-        }
-
-        async function cancelAppointment(id) {
-            const apt = appointments.find(a => a.id === id);
-            if (apt.status === 'cancelled') {
-                if (confirm('Запись уже отменена. Удалить навсегда?')) {
-                    await window.firebase.deleteDoc(window.firebase.doc(db, 'appointments', id));
-                }
-                return;
-            }
-            if (!confirm('Отменить запись?')) return;
-
-            const aptIndex = appointments.findIndex(a => a.id === id);
-            appointments[aptIndex].status = 'cancelled';
-            await window.firebase.updateDoc(window.firebase.doc(db, 'appointments', id), { status: 'cancelled' });
-            updateTimeSlots(document.getElementById('bookingDate')?.value);
-            alert('✅ Запись отменена!');
-        }
-
-        async function confirmAppointment(id) {
-            const apt = appointments.find(a => a.id === id);
-            if (apt.status === 'confirmed') {
-                alert('Запись уже подтверждена!');
-                return;
-            }
-            apt.status = 'confirmed';
-            await window.firebase.updateDoc(window.firebase.doc(db, 'appointments', id), { status: 'confirmed' });
-            alert('✅ Запись подтверждена!');
-            if (window.calendar) updateCalendarEvents();
-        }
-
-        function prevAdminDate() {
-            const date = new Date(currentAdminDate);
-            date.setDate(date.getDate() - 1);
-            currentAdminDate = date.toISOString().split('T')[0];
-            updateAdminPanel();
-        }
-
-        function nextAdminDate() {
-            const date = new Date(currentAdminDate);
-            date.setDate(date.getDate() + 1);
-            currentAdminDate = date.toISOString().split('T')[0];
-            updateAdminPanel();
-        }
-
-        function todayAdminDate() {
-            currentAdminDate = new Date().toISOString().split('T')[0];
-            updateAdminPanel();
-        }
-
-        function updateStats() {
-            const today = new Date().toISOString().split('T')[0];
-            const tomorrow = new Date();
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            const tomorrowStr = tomorrow.toISOString().split('T')[0];
-
-            document.getElementById('stats').textContent = appointments.filter(apt => apt.slotDate === today).length;
-            document.getElementById('statsTomorrow').textContent = appointments.filter(apt => apt.slotDate === tomorrowStr).length;
-        }
-
-        function showSlotDetails(slotId, appointments) {
-            alert(`${slotId}\nЗаписи: ${appointments.length}\n${appointments.map(a => a.name).join(', ')}`);
-        }
-
-        // Gallery Functions
-        async function loadGallery() {
-            try {
-                const storageRef = window.firebase.ref(storage, 'gallery/');
-                const result = await window.firebase.listAll(storageRef);
-                const container = document.getElementById('galleryContainer');
-                container.innerHTML = '';
-
-                for (let i = 0; i < result.items.length; i++) {
-                    const url = await window.firebase.getDownloadURL(result.items[i]);
-                    const div = document.createElement('div');
-                    div.className = 'glass rounded-3xl shadow-2xl hover:shadow-3xl overflow-hidden';
-                    div.innerHTML = `
-                        <img src="${url}" alt="Работа ${i+1}" class="w-full h-80 gallery-img object-cover hover:scale-105 transition-transform duration-500">
-                    `;
-                    container.appendChild(div);
-                }
-            } catch (error) {
-                console.error('Gallery load error:', error);
-            }
-        }
-
-        async function uploadGalleryImage() {
-            const fileInput = document.getElementById('galleryFile');
-            const files = fileInput.files;
-            if (files.length === 0) return;
-
-            const uploadBtn = event.target;
-            uploadBtn.classList.add('loading');
-
-            try {
-                for (let file of files) {
-                    const storageRef = window.firebase.ref(storage, `gallery/${file.name}`);
-                    await window.firebase.uploadBytes(storageRef, file);
-                }
-                loadGallery();
-                fileInput.value = '';
-                alert('✅ Фото загружены!');
-            } catch (error) {
-                console.error('Upload error:', error);
-                alert('Ошибка загрузки!');
-            } finally {
-                uploadBtn.classList.remove('loading');
-            }
-        }
-
-        function toggleGalleryUpload() {
-            const uploadSection = document.getElementById('adminGalleryUpload');
-            uploadSection.classList.toggle('hidden');
-        }
-
-        // Reviews Functions
-        function loadReviews() {
-            const container = document.getElementById('reviewsContainer');
-            // Simplified - load from Firestore in full implementation
-            container.innerHTML = `
-                <div class="glass p-6 rounded-3xl border border-yellow-200/50">
-                    <div class="flex items-center mb-2">
-                        <i class="fas fa-star text-yellow-400 mr-1"></i>
-                        <span class="font-bold text-lg">4.9/5 (127 отзывов)</span>
-                    </div>
-                    <p class="text-gray-700 italic">"Идеальный маникюр! Мастера профи!"</p>
-                </div>
-            `;
-        }
-
-        let currentReviewRating = 0;
-        function initReviewStars() {
-            document.querySelectorAll('.review-star').forEach(star => {
-                star.addEventListener('click', function() {
-                    currentReviewRating = parseInt(this.dataset.rating);
-                    document.getElementById('reviewRatingText').textContent = currentReviewRating;
-                    document.querySelectorAll('.review-star').forEach((s, i) => {
-                        s.classList.toggle('text-yellow-400', i < currentReviewRating);
-                        s.classList.toggle('text-gray-300', i >= currentReviewRating);
-                    });
-                });
-            });
-        }
-
-        function showReviewModal(appointmentId) {
-            document.getElementById('reviewAppointmentId').value = appointmentId;
-            currentReviewRating = 0;
-            document.getElementById('reviewText').value = '';
-            document.getElementById('reviewModal').classList.add('active');
-            initReviewStars();
-        }
-
-        function closeReviewModal() {
-            document.getElementById('reviewModal').classList.remove('active');
-        }
-
-        async function submitReview() {
-            if (currentReviewRating === 0) {
-                alert('Поставьте оценку!');
-                return;
-            }
-
-            const appointmentId = document.getElementById('reviewAppointmentId').value;
-            const reviewText = document.getElementById('reviewText').value;
-
-            try {
-                await window.firebase.addDoc(reviewsCol, {
-                    appointmentId,
-                    rating: currentReviewRating,
-                    text: reviewText,
-                    createdAt: window.firebase.serverTimestamp()
-                });
-                alert('✅ Отзыв добавлен!');
-                closeReviewModal();
-                loadReviews();
-            } catch (error) {
-                console.error('Review error:', error);
-                alert('Ошибка!');
-            }
-        }
-
-        // Event Listeners
-        document.getElementById('addSlotModal').addEventListener('click', function(e) {
-            if (e.target === this) closeAddSlotModal();
-        });
-        document.getElementById('bulkSlotsModal').addEventListener('click', function(e) {
-            if (e.target === this) closeBulkSlotsModal();
-        });
-        document.getElementById('adminPasswordModal').addEventListener('click', function(e) {
-            if (e.target === this) closeAdminPasswordModal();
-        });
-        document.getElementById('reviewModal').addEventListener('click', function(e) {
-            if (e.target === this) closeReviewModal();
-        });
-
-        // Smooth scroll animations
-        const observer = new IntersectionObserver(entries => {
+        const observer = new IntersectionObserver(function(entries) {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
                 }
             });
-        });
-        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        }, observerOptions);
 
+        document.querySelectorAll('.fade-in').forEach(el => {
+            observer.observe(el);
+        });
+
+        // RSVP Form
+        document.getElementById('rsvpForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Показать сообщение об успешной отправке
+            const btn = e.target.querySelector('.btn');
+            const originalText = btn.textContent;
+            btn.textContent = '✅ Отправлено!';
+            btn.disabled = true;
+            
+            // Здесь интеграция с Formspree или EmailJS
+            console.log('Form data:', new FormData(e.target));
+            
+            // Formspree: просто смените action атрибут формы на ваш endpoint
+            // EmailJS: раскомментируйте и настройте
+            /*
+            emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', e.target)
+                .then(() => {
+                    alert('Спасибо! Ваше подтверждение получено!');
+                }, (error) => {
+                    alert('Ошибка отправки. Попробуйте позже.');
+                });
+            */
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+                e.target.reset();
+                document.getElementById('adults').textContent = '0';
+                document.getElementById('children').textContent = '0';
+            }, 3000);
+        });
+
+        // Smooth scroll для навигации
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
             });
         });
-
-        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
